@@ -156,81 +156,32 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec";
 
     // 25 CẶP ẢNH CÓ NGƯỜI + HOẠT ĐỘNG (FCE Part 2)
-  const IMAGE_PAIRS = [
-    // 1. Lướt sóng vs Làm việc nhóm
-    { img1: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=300&fit=crop", id: 1 },
-
-    // 2. Ăn uống vs Chơi thể thao
-    { img1: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop", id: 2 },
-
-    // 3. Dã ngoại gia đình vs Du lịch nhóm bạn
-    { img1: "https://images.unsplash.com/photo-1505840717430-882ce147ef2d?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop", id: 3 },
-
-    // 4. Ăn nhà hàng vs Biểu diễn âm nhạc
-    { img1: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop", id: 4 },
-
-    // 5. Học nhóm vs Chụp ảnh nghệ thuật
-    { img1: "https://images.unsplash.com/photo-1492684223066-8137a7dd1d9e?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=300&fit=crop", id: 5 },
-
-    // 6. Nấu ăn gia đình vs Tập gym
-    { img1: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1556911220-b0bf3f5c4b8b?w=400&h=300&fit=crop", id: 6 },
-
-    // 7. Đi chợ vs Chơi nhạc đường phố
-    { img1: "https://images.unsplash.com/photo-1578916171728-46686b7a3db3?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=300&fit=crop", id: 7 },
-
-    // 8. Cắm trại vs Tham quan bảo tàng
-    { img1: "https://images.unsplash.com/photo-1504280390367-361ea8d9f3d4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1518998053901-534e6701d2b4?w=400&h=300&fit=crop", id: 8 },
-
-    // 9. Chơi bóng rổ vs Vẽ tranh ngoài trời
-    { img1: "https://images.unsplash.com/photo-1546519638-68d9f2b1a8b2?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1579783902614-a3b3928b3a34?w=400&h=300&fit=crop", id: 9 },
-
-    // 10. Đi câu cá vs Học khiêu vũ
-    { img1: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1524594152303-9fd13543a85b?w=400&h=300&fit=crop", id: 10 },
-
-    // 11. Chăm sóc vườn vs Tham gia tình nguyện
-    { img1: "https://images.unsplash.com/photo-1592417817096-8c2c8f0b5a6b?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1582213782179-e0d59f3e2d85?w=400&h=300&fit=crop", id: 11 },
-
-    // 12. Biểu diễn kịch vs Chụp ảnh cưới
-    { img1: "https://images.unsplash.com/photo-1517602304630-0f66c1c5a5d7?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop", id: 12 },
-
-    // 13. Đạp xe đường dài vs Tổ chức tiệc sinh nhật
-    { img1: "https://images.unsplash.com/photo-1558981403-c5f989902d16?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400&h=300&fit=crop", id: 13 },
-
-    // 14. Làm bánh vs Chơi board game
-    { img1: "https://images.unsplash.com/photo-1556909114-f6e7ad2d3138?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1606851094291-5c0c5b0c0d8b?w=400&h=300&fit=crop", id: 14 },
-
-    // 15. Leo núi vs Tham gia hội thảo
-    { img1: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop", id: 15 },
-
-    // 16. Chơi nhạc cụ vs Học ngoại ngữ
-    { img1: "https://images.unsplash.com/photo-1511376777868-611b54f68947?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1509062577806-8dc1b8b9e91d?w=400&h=300&fit=crop", id: 16 },
-
-    // 17. Đi chợ đêm vs Xem phim ngoài trời
-    { img1: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1560272564-c83b19b38153?w=400&h=300&fit=crop", id: 17 },
-
-    // 18. Làm đồ thủ công vs Chạy marathon
-    { img1: "https://images.unsplash.com/photo-1588075592446-4f1d9c6c95b6?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&h=300&fit=crop", id: 18 },
-
-    // 19. Tham gia yoga vs Bán hàng từ thiện
-    { img1: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1604882733-8b0c06659b5b?w=400&h=300&fit=crop", id: 19 },
-
-    // 20. Chăm sóc thú cưng vs Tổ chức triển lãm
-    { img1: "https://images.unsplash.com/photo-1543466835-00a638f80e92?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop", id: 20 },
-
-    // 21. Làm việc từ xa vs Tham gia lớp học nấu ăn
-    { img1: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1556912167-f556f1f9e1fd?w=400&h=300&fit=crop", id: 21 },
-
-    // 22. Chơi trò chơi điện tử vs Tham gia câu lạc bộ sách
-    { img1: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop", id: 22 },
-
-    // 23. Đi công viên vs Tham gia lễ hội
-    { img1: "https://images.unsplash.com/photo-1519337265831-2811f4168a7f?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1501281664972-97dd933c4882?w=400&h=300&fit=crop", id: 23 },
-
-    // 24. Làm việc tình nguyện vs Chụp ảnh phong cảnh
-    { img1: "https://images.unsplash.com/photo-1593113598332-cd288f2f1b4d?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1502086223501-9d45c2f3d881?w=400&h=300&fit=crop", id: 24 },
-
-    // 25. Tham gia workshop vs Đi dạo phố cổ
-    { img1: "https://images.unsplash.com/photo-1523240795612-9a9998e6792a?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1519671482743-fd75c3bc4e8f?w=400&h=300&fit=crop", id: 25 }
+const IMAGE_PAIRS = [
+    { img1: "https://picsum.photos/seed/speak1a/400/300", img2: "https://picsum.photos/seed/speak1b/400/300", id: 1 },
+    { img1: "https://picsum.photos/seed/speak2a/400/300", img2: "https://picsum.photos/seed/speak2b/400/300", id: 2 },
+    { img1: "https://picsum.photos/seed/speak3a/400/300", img2: "https://picsum.photos/seed/speak3b/400/300", id: 3 },
+    { img1: "https://picsum.photos/seed/speak4a/400/300", img2: "https://picsum.photos/seed/speak4b/400/300", id: 4 },
+    { img1: "https://picsum.photos/seed/speak5a/400/300", img2: "https://picsum.photos/seed/speak5b/400/300", id: 5 },
+    { img1: "https://picsum.photos/seed/speak6a/400/300", img2: "https://picsum.photos/seed/speak6b/400/300", id: 6 },
+    { img1: "https://picsum.photos/seed/speak7a/400/300", img2: "https://picsum.photos/seed/speak7b/400/300", id: 7 },
+    { img1: "https://picsum.photos/seed/speak8a/400/300", img2: "https://picsum.photos/seed/speak8b/400/300", id: 8 },
+    { img1: "https://picsum.photos/seed/speak9a/400/300", img2: "https://picsum.photos/seed/speak9b/400/300", id: 9 },
+    { img1: "https://picsum.photos/seed/speak10a/400/300", img2: "https://picsum.photos/seed/speak10b/400/300", id: 10 },
+    { img1: "https://picsum.photos/seed/speak11a/400/300", img2: "https://picsum.photos/seed/speak11b/400/300", id: 11 },
+    { img1: "https://picsum.photos/seed/speak12a/400/300", img2: "https://picsum.photos/seed/speak12b/400/300", id: 12 },
+    { img1: "https://picsum.photos/seed/speak13a/400/300", img2: "https://picsum.photos/seed/speak13b/400/300", id: 13 },
+    { img1: "https://picsum.photos/seed/speak14a/400/300", img2: "https://picsum.photos/seed/speak14b/400/300", id: 14 },
+    { img1: "https://picsum.photos/seed/speak15a/400/300", img2: "https://picsum.photos/seed/speak15b/400/300", id: 15 },
+    { img1: "https://picsum.photos/seed/speak16a/400/300", img2: "https://picsum.photos/seed/speak16b/400/300", id: 16 },
+    { img1: "https://picsum.photos/seed/speak17a/400/300", img2: "https://picsum.photos/seed/speak17b/400/300", id: 17 },
+    { img1: "https://picsum.photos/seed/speak18a/400/300", img2: "https://picsum.photos/seed/speak18b/400/300", id: 18 },
+    { img1: "https://picsum.photos/seed/speak19a/400/300", img2: "https://picsum.photos/seed/speak19b/400/300", id: 19 },
+    { img1: "https://picsum.photos/seed/speak20a/400/300", img2: "https://picsum.photos/seed/speak20b/400/300", id: 20 },
+    { img1: "https://picsum.photos/seed/speak21a/400/300", img2: "https://picsum.photos/seed/speak21b/400/300", id: 21 },
+    { img1: "https://picsum.photos/seed/speak22a/400/300", img2: "https://picsum.photos/seed/speak22b/400/300", id: 22 },
+    { img1: "https://picsum.photos/seed/speak23a/400/300", img2: "https://picsum.photos/seed/speak23b/400/300", id: 23 },
+    { img1: "https://picsum.photos/seed/speak24a/400/300", img2: "https://picsum.photos/seed/speak24b/400/300", id: 24 },
+    { img1: "https://picsum.photos/seed/speak25a/400/300", img2: "https://picsum.photos/seed/speak25b/400/300", id: 25 }
 ];
 
     let studentName = "", currentPair = null, mediaRecorder = null, audioChunks = [], timerInterval, seconds = 60;
