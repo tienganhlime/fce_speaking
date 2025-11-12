@@ -1,111 +1,229 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FCE Photo Duel – AI Judge</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/confetti.min.js"></script>
-  <style>
-    .hidden { display: none; }
-    .waveform { height: 60px; background: linear-gradient(to right, #10b981, #3b82f6); border-radius: 8px; animation: pulse 1s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCE Speaking Week 1 - Trung Tâm Tiếng Anh LIME</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #81C784 100%);
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .correct-answer { background-color: #C8E6C9 !important; border-color: #4CAF50 !important; }
+        .wrong-answer { background-color: #FFCDD2 !important; border-color: #F44336 !important; }
+        label span { font-size: 20px; }
+        #instructions p, .text-sm { font-size: 20px !important; }
+        .hidden { display: none; }
+        .waveform { height: 60px; background: linear-gradient(to right, #10b981, #3b82f6); border-radius: 8px; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen font-sans">
+<body>
 
-  <!-- LOGIN -->
-  <div id="loginScreen" class="flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-      <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">FCE Photo Duel</h1>
-      <input id="studentName" type="text" placeholder="Nhập tên em" class="w-full p-3 border rounded-lg mb-4 text-lg" />
-      <button onclick="startGame()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition">
-        Bắt đầu chơi!
-      </button>
+<!-- Màn hình nhập mã -->
+<div id="codeScreen" class="min-h-screen p-4 fade-in">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
+            <div class="text-center mb-8">
+                <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
+                     alt="LIME Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
+                <h1 class="text-4xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
+                <p class="text-green-600 text-lg">Hotline: 0976222792</p>
+                <div class="mt-4 h-1 w-32 bg-green-500 mx-auto rounded"></div>
+            </div>
+            
+            <div class="bg-green-50 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold text-green-800 mb-4">FCE SPEAKING - WEEK 1</h2>
+                <div class="space-y-2 text-green-700">
+                    <p>🎤 Part 2: Photo Duel - Compare two photos</p>
+                    <p>🕒 60 giây để nói (có thể nghe lại và gửi AI chấm)</p>
+                    <p>✅ AI Judge tự động chấm điểm</p>
+                    <p>📊 Bảng xếp hạng và theo dõi tiến độ</p>
+                </div>
+            </div>
+
+            <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-2">
+                    <svg class="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                    <div class="text-yellow-800 text-sm">
+                        <p class="font-bold mb-1">⚠️ Lưu ý:</p>
+                        <p>• Giữ nút để nói, thả để dừng</p>
+                        <p>• Có thể nói lại nhiều lần</p>
+                        <p>• AI sẽ chấm dựa trên FCE criteria</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-green-800 font-semibold mb-2">Mã học sinh *</label>
+                <input type="text" id="studentCode" 
+                    class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none uppercase"
+                    placeholder="Nhập mã học sinh (VD: HS001)">
+            </div>
+
+            <button onclick="verifyStudent()" 
+                class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+                XÁC NHẬN & BẮT ĐẦU
+            </button>
+        </div>
     </div>
-  </div>
+</div>
 
-  <!-- GAME -->
-  <div id="gameScreen" class="hidden container mx-auto p-4 max-w-5xl">
+<!-- GAME -->
+<div id="gameScreen" class="hidden container mx-auto p-4 max-w-5xl">
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
-      <div class="flex justify-between items-center mb-4">
-        <h2 id="studentInfo" class="text-2xl font-bold text-purple-700"></h2>
-        <button onclick="showLeaderboard()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold">Bảng Xếp Hạng</button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div class="relative">
-          <img id="img1" class="w-full rounded-xl shadow-md transform rotate-6" src="" alt="Ảnh 1" />
-          <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 1</div>
+        <div class="flex justify-between items-center mb-4">
+            <h2 id="studentInfo" class="text-2xl font-bold text-green-700"></h2>
+            <button onclick="showLeaderboard()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold">Bảng Xếp Hạng</button>
         </div>
-        <div class="relative">
-          <img id="img2" class="w-full rounded-xl shadow-md transform -rotate-6" src="" alt="Ảnh 2" />
-          <div class="absolute top-2 left-2 bg-blue-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 2</div>
-        </div>
-      </div>
 
-      <div class="text-center mb-6">
-        <div id="timer" class="text-5xl font-bold text-red-600 mb-4">60</div>
-        <button id="recordBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
-          Giữ để nói
-        </button>
-        <div id="waveform" class="waveform mt-4 hidden"></div>
-      </div>
-
-      <div id="reviewSection" class="hidden bg-gray-50 p-6 rounded-xl">
-        <h3 class="text-xl font-bold mb-3">Nghe lại & Gửi</h3>
-        <audio id="playback" controls class="w-full mb-4"></audio>
-        <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="AI sẽ chấm..."></textarea>
-        <div class="flex gap-3">
-          <button onclick="retryRecording()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
-          <button onclick="submitSpeech()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">Gửi AI chấm!</button>
+        <div class="text-center mb-6">
+            <h3 class="text-xl font-bold text-green-800 mb-4">FCE Speaking Part 2: Compare the two photos</h3>
+            <p class="text-green-700 mb-4">Compare the two photos and say why the people might be doing these activities. (1 minute)</p>
         </div>
-      </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="relative">
+                <img id="img1" class="w-full rounded-xl shadow-md transform rotate-6" src="" alt="Ảnh 1" />
+                <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 1</div>
+            </div>
+            <div class="relative">
+                <img id="img2" class="w-full rounded-xl shadow-md transform -rotate-6" src="" alt="Ảnh 2" />
+                <div class="absolute top-2 left-2 bg-blue-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 2</div>
+            </div>
+        </div>
+
+        <div class="text-center mb-6">
+            <div id="timer" class="text-5xl font-bold text-red-600 mb-4">60</div>
+            <button id="recordBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
+                Giữ để nói
+            </button>
+            <div id="waveform" class="waveform mt-4 hidden"></div>
+        </div>
+
+        <div id="reviewSection" class="hidden bg-gray-50 p-6 rounded-xl">
+            <h3 class="text-xl font-bold mb-3">Nghe lại & Gửi</h3>
+            <audio id="playback" controls class="w-full mb-4"></audio>
+            <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="AI sẽ chấm..."></textarea>
+            <div class="flex gap-3">
+                <button onclick="retryRecording()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
+                <button onclick="submitSpeech()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">Gửi AI chấm!</button>
+            </div>
+        </div>
     </div>
 
     <div id="resultSection" class="hidden bg-gradient-to-r from-green-400 to-blue-500 text-white p-6 rounded-2xl shadow-lg text-center">
-      Wolfe
-      <h3 class="text-3xl font-bold mb-4">Kết quả!</h3>
-      <p id="scoreText" class="text-5xl font-bold mb-2"></p>
-      <p id="feedbackText" class="text-xl mb-4"></p>
-      <div id="cupDisplay" class="text-6xl mb-4"></div>
-      <button onclick="nextRound()" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">Chơi tiếp!</button>
+        <h3 class="text-3xl font-bold mb-4">Kết quả!</h3>
+        <p id="scoreText" class="text-5xl font-bold mb-2"></p>
+        <p id="feedbackText" class="text-xl mb-4"></p>
+        <div id="cupDisplay" class="text-6xl mb-4"></div>
+        <button onclick="nextRound()" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">Chơi tiếp!</button>
     </div>
-  </div>
+</div>
 
-  <!-- LEADERBOARD -->
-  <div id="leaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+<!-- LEADERBOARD -->
+<div id="leaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-      <h3 class="text-2xl font-bold text-center text-purple-700 mb-4">Bảng Xếp Hạng</h3>
-      <div id="leaderboardBody" class="space-y-2 max-h-96 overflow-y-auto"></div>
-      <button onclick="closeLeaderboard()" class="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg font-bold">Đóng</button>
+        <h3 class="text-2xl font-bold text-center text-green-700 mb-4">Bảng Xếp Hạng</h3>
+        <div id="leaderboardBody" class="space-y-2 max-h-96 overflow-y-auto"></div>
+        <button onclick="closeLeaderboard()" class="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg font-bold">Đóng</button>
     </div>
-  </div>
+</div>
 
-  <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec"; // DÁN URL TỪ APPS SCRIPT
+<script>
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec'; // URL từ Apps Script
     const IMAGE_PAIRS = [
-      { img1: "https://picsum.photos/400/300?random=1", img2: "https://picsum.photos/400/300?random=2", id: 1 },
-      { img1: "https://picsum.photos/400/300?random=3", img2: "https://picsum.photos/400/300?random=4", id: 2 },
-      // Thêm 23 cặp nữa
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-on-a-beach-with-surfboards-v0IuFd74WaQ/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-sitting-around-a-table-with-laptops-JKUTrJ4vK00/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 1 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-next-to-each-other-5O1ddenSMQ4/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 2 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-sitting-around-a-table-with-food-8TJ0Fi8fLYA/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 3 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 4 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 5 },
+        // Thêm 20 cặp ảnh nữa với người (sử dụng Unsplash random với người, bạn có thể thay thế URL thực tế)
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 6 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 7 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 8 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 9 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 10 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 11 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 12 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 13 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 14 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 15 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 16 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 17 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 18 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 19 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 20 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 21 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 22 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 23 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 24 },
+        { img1: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", img2: "https://unsplash.com/photos/a-group-of-people-standing-around-a-table-with-food-x0Y3Yk8aV4s/download?ixid=M3wzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE3MzE0NTY1NjV8&force=true", id: 25 }
     ];
 
-    let studentName = "", currentPair = null, mediaRecorder = null, audioChunks = [], timerInterval, seconds = 60;
+    let studentInfo = {}, currentPair = null, mediaRecorder = null, audioChunks = [], timerInterval, seconds = 60;
 
-    function startGame() {
-      studentName = document.getElementById("studentName").value.trim();
-      if (!studentName) return alert("Nhập tên!");
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("gameScreen").classList.remove("hidden");
-      document.getElementById("studentInfo").textContent = `${studentName} – FCE AI Challenge`;
-      loadRandomPair();
+    async function verifyStudent() {
+        const code = document.getElementById('studentCode').value.trim().toUpperCase();
+        if (!code) {
+            alert('Vui lòng nhập mã học sinh!');
+            return;
+        }
+        
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div> <span>Đang xác nhận mã...</span>';
+        
+        try {
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=verify&code=${code}`);
+            const data = await response.json();
+            
+            if (data.exists) {
+                studentInfo = { code: code, name: data.studentName };
+                document.getElementById('codeScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                document.getElementById('studentInfo').textContent = `${data.studentName} – FCE Speaking Week 1`;
+                loadRandomPair();
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                alert('❌ Mã học sinh không tồn tại!\n\n📞 Vui lòng liên hệ giáo viên để được hỗ trợ.');
+            }
+        } catch (error) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            alert('⚠️ Lỗi kết nối!\n\n📞 Vui lòng kiểm tra Internet hoặc liên hệ giáo viên.');
+            console.error('Error:', error);
+        }
     }
 
     function loadRandomPair() {
-      currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
-      document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
-      document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
-      resetRecording();
+        currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
+        document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
+        document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
+        resetRecording();
     }
 
     let isRecording = false;
@@ -116,113 +234,112 @@
     recordBtn.addEventListener("touchend", stopRecording);
 
     async function startRecording(e) {
-      e.preventDefault();
-      if (isRecording) return;
-      isRecording = true;
-      audioChunks = [];
-      seconds = 60;
-      document.getElementById("timer").textContent = seconds;
-      document.getElementById("waveform").classList.remove("hidden");
-      recordBtn.classList.add("bg-red-800");
-
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder = new MediaRecorder(stream);
-      mediaRecorder.start();
-
-      timerInterval = setInterval(() => {
-        seconds--;
+        e.preventDefault();
+        if (isRecording) return;
+        isRecording = true;
+        audioChunks = [];
+        seconds = 60;
         document.getElementById("timer").textContent = seconds;
-        if (seconds <= 0) stopRecording();
-      }, 1000);
+        document.getElementById("waveform").classList.remove("hidden");
+        recordBtn.classList.add("bg-red-800");
 
-      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-      mediaRecorder.onstop = showReview;
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+
+        timerInterval = setInterval(() => {
+            seconds--;
+            document.getElementById("timer").textContent = seconds;
+            if (seconds <= 0) stopRecording();
+        }, 1000);
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = showReview;
     }
 
     function stopRecording() {
-      if (!isRecording) return;
-      isRecording = false;
-      clearInterval(timerInterval);
-      document.getElementById("waveform").classList.add("hidden");
-      recordBtn.classList.remove("bg-red-800");
-      if (mediaRecorder) mediaRecorder.stop();
+        if (!isRecording) return;
+        isRecording = false;
+        clearInterval(timerInterval);
+        document.getElementById("waveform").classList.add("hidden");
+        recordBtn.classList.remove("bg-red-800");
+        if (mediaRecorder) mediaRecorder.stop();
     }
 
     function showReview() {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      document.getElementById("playback").src = audioUrl;
-      document.getElementById("reviewSection").classList.remove("hidden");
-      window.currentAudioBlob = audioBlob;
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        document.getElementById("playback").src = audioUrl;
+        document.getElementById("reviewSection").classList.remove("hidden");
+        window.currentAudioBlob = audioBlob;
     }
 
     function retryRecording() {
-      document.getElementById("reviewSection").classList.add("hidden");
-      resetRecording();
+        document.getElementById("reviewSection").classList.add("hidden");
+        resetRecording();
     }
 
     function resetRecording() {
-      document.getElementById("timer").textContent = "60";
-      document.getElementById("recordBtn").disabled = false;
+        document.getElementById("timer").textContent = "60";
+        document.getElementById("recordBtn").disabled = false;
     }
 
     async function submitSpeech() {
-      const audioBlob = window.currentAudioBlob;
-      if (!audioBlob) return alert("Chưa ghi âm!");
+        const audioBlob = window.currentAudioBlob;
+        if (!audioBlob) return alert("Chưa ghi âm!");
 
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Audio = reader.result;
+        const reader = new FileReader();
+        reader.onload = async () => {
+            const base64Audio = reader.result;
 
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify({
-            name: studentName,
-            pairId: currentPair.id,
-            audioBase64: base64Audio
-          })
-        });
-        const data = await res.json();
-        if (!data.success) return alert("Lỗi: " + data.error);
+            const res = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: studentInfo.name,
+                    pairId: currentPair.id,
+                    audioBase64: base64Audio
+                })
+            });
+            const data = await res.json();
+            if (!data.success) return alert("Lỗi: " + data.error);
 
-        document.getElementById("transcript").value = data.transcript;
-        showResult(data, data.score);
-      };
-      reader.readAsDataURL(audioBlob);
+            document.getElementById("transcript").value = data.transcript;
+            showResult(data, data.score);
+        };
+        reader.readAsDataURL(audioBlob);
     }
 
     function showResult(data, score) {
-      document.getElementById("reviewSection").classList.add("hidden");
-      document.getElementById("resultSection").classList.remove("hidden");
-      document.getElementById("scoreText").textContent = `${score}%`;
-      document.getElementById("feedbackText").textContent = score >= 85 ? "Xuất sắc C1!" : score >= 75 ? "Tốt B2!" : "Cố lên!";
-      document.getElementById("cupDisplay").textContent = score >= 85 ? "Gold Cup" : score >= 75 ? "Silver Cup" : "Bronze Cup";
-      if (score >= 80) new Confetti().frame();
+        document.getElementById("reviewSection").classList.add("hidden");
+        document.getElementById("resultSection").classList.remove("hidden");
+        document.getElementById("scoreText").textContent = `${score}%`;
+        document.getElementById("feedbackText").textContent = score >= 85 ? "Xuất sắc C1!" : score >= 75 ? "Tốt B2!" : "Cố lên!";
+        document.getElementById("cupDisplay").textContent = score >= 85 ? "Gold Cup" : score >= 75 ? "Silver Cup" : "Bronze Cup";
     }
 
     function nextRound() {
-      document.getElementById("resultSection").classList.add("hidden");
-      loadRandomPair();
+        document.getElementById("resultSection").classList.add("hidden");
+        loadRandomPair();
     }
 
     async function showLeaderboard() {
-      const res = await fetch(SCRIPT_URL + "?action=getLeaderboard");
-      const leaderboard = await res.json();
-      const body = document.getElementById("leaderboardBody");
-      body.innerHTML = "";
-      leaderboard.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "flex justify-between items-center p-3 bg-gray-50 rounded-lg";
-        div.innerHTML = `<span class="font-bold">#${item.rank} ${item.name}</span>
-                         <span>${item.cup} điểm (${item.plays} lần)</span>`;
-        body.appendChild(div);
-      });
-      document.getElementById("leaderboardModal").classList.remove("hidden");
+        const res = await fetch(GOOGLE_SCRIPT_URL + "?action=getLeaderboard");
+        const leaderboard = await res.json();
+        const body = document.getElementById("leaderboardBody");
+        body.innerHTML = "";
+        leaderboard.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "flex justify-between items-center p-3 bg-gray-50 rounded-lg";
+            div.innerHTML = `<span class="font-bold">#${item.rank} ${item.name}</span>
+                             <span>${item.cup} điểm (${item.plays} lần)</span>`;
+            body.appendChild(div);
+        });
+        document.getElementById("leaderboardModal").classList.remove("hidden");
     }
 
     function closeLeaderboard() {
-      document.getElementById("leaderboardModal").classList.add("hidden");
+        document.getElementById("leaderboardModal").classList.add("hidden");
     }
-  </script>
+</script>
 </body>
 </html>
