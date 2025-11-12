@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FCE Photo Duel – AI Judge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/confetti.min.js"></script>
+  <style>
+    .hidden { display: none; }
+    .waveform { height: 60px; background: linear-gradient(to right, #10b981, #3b82f6); border-radius: 8px; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen font-sans">
+
+  <!-- LOGIN -->
+  <div id="loginScreen" class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+      <h1 class="text-3xl font-bold text-center text-purple-700 mb-6">FCE Photo Duel</h1>
+      <input id="studentName" type="text" placeholder="Nhập tên em" class="w-full p-3 border rounded-lg mb-4 text-lg" />
+      <button onclick="startGame()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition">
+        Bắt đầu chơi!
+      </button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="hidden container mx-auto p-4 max-w-5xl">
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 id="studentInfo" class="text-2xl font-bold text-purple-700"></h2>
+        <button onclick="showLeaderboard()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold">Bảng Xếp Hạng</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="relative">
+          <img id="img1" class="w-full rounded-xl shadow-md transform rotate-6" src="" alt="Ảnh 1" />
+          <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 1</div>
+        </div>
+        <div class="relative">
+          <img id="img2" class="w-full rounded-xl shadow-md transform -rotate-6" src="" alt="Ảnh 2" />
+          <div class="absolute top-2 left-2 bg-blue-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 2</div>
+        </div>
+      </div>
+
+      <div class="text-center mb-6">
+        <div id="timer" class="text-5xl font-bold text-red-600 mb-4">60</div>
+        <button id="recordBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
+          Giữ để nói
+        </button>
+        <div id="waveform" class="waveform mt-4 hidden"></div>
+      </div>
+
+      <div id="reviewSection" class="hidden bg-gray-50 p-6 rounded-xl">
+        <h3 class="text-xl font-bold mb-3">Nghe lại & Gửi</h3>
+        <audio id="playback" controls class="w-full mb-4"></audio>
+        <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="AI sẽ chấm..."></textarea>
+        <div class="flex gap-3">
+          <button onclick="retryRecording()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
+          <button onclick="submitSpeech()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">Gửi AI chấm!</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultSection" class="hidden bg-gradient-to-r from-green-400 to-blue-500 text-white p-6 rounded-2xl shadow-lg text-center">
+      Wolfe
+      <h3 class="text-3xl font-bold mb-4">Kết quả!</h3>
+      <p id="scoreText" class="text-5xl font-bold mb-2"></p>
+      <p id="feedbackText" class="text-xl mb-4"></p>
+      <div id="cupDisplay" class="text-6xl mb-4"></div>
+      <button onclick="nextRound()" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">Chơi tiếp!</button>
+    </div>
+  </div>
+
+  <!-- LEADERBOARD -->
+  <div id="leaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
+      <h3 class="text-2xl font-bold text-center text-purple-700 mb-4">Bảng Xếp Hạng</h3>
+      <div id="leaderboardBody" class="space-y-2 max-h-96 overflow-y-auto"></div>
+      <button onclick="closeLeaderboard()" class="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg font-bold">Đóng</button>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec"; // DÁN URL TỪ APPS SCRIPT
+    const IMAGE_PAIRS = [
+      { img1: "https://picsum.photos/400/300?random=1", img2: "https://picsum.photos/400/300?random=2", id: 1 },
+      { img1: "https://picsum.photos/400/300?random=3", img2: "https://picsum.photos/400/300?random=4", id: 2 },
+      // Thêm 23 cặp nữa
+    ];
+
+    let studentName = "", currentPair = null, mediaRecorder = null, audioChunks = [], timerInterval, seconds = 60;
+
+    function startGame() {
+      studentName = document.getElementById("studentName").value.trim();
+      if (!studentName) return alert("Nhập tên!");
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      document.getElementById("studentInfo").textContent = `${studentName} – FCE AI Challenge`;
+      loadRandomPair();
+    }
+
+    function loadRandomPair() {
+      currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
+      document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
+      document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
+      resetRecording();
+    }
+
+    let isRecording = false;
+    const recordBtn = document.getElementById("recordBtn");
+    recordBtn.addEventListener("mousedown", startRecording);
+    recordBtn.addEventListener("touchstart", startRecording);
+    recordBtn.addEventListener("mouseup", stopRecording);
+    recordBtn.addEventListener("touchend", stopRecording);
+
+    async function startRecording(e) {
+      e.preventDefault();
+      if (isRecording) return;
+      isRecording = true;
+      audioChunks = [];
+      seconds = 60;
+      document.getElementById("timer").textContent = seconds;
+      document.getElementById("waveform").classList.remove("hidden");
+      recordBtn.classList.add("bg-red-800");
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.start();
+
+      timerInterval = setInterval(() => {
+        seconds--;
+        document.getElementById("timer").textContent = seconds;
+        if (seconds <= 0) stopRecording();
+      }, 1000);
+
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = showReview;
+    }
+
+    function stopRecording() {
+      if (!isRecording) return;
+      isRecording = false;
+      clearInterval(timerInterval);
+      document.getElementById("waveform").classList.add("hidden");
+      recordBtn.classList.remove("bg-red-800");
+      if (mediaRecorder) mediaRecorder.stop();
+    }
+
+    function showReview() {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      document.getElementById("playback").src = audioUrl;
+      document.getElementById("reviewSection").classList.remove("hidden");
+      window.currentAudioBlob = audioBlob;
+    }
+
+    function retryRecording() {
+      document.getElementById("reviewSection").classList.add("hidden");
+      resetRecording();
+    }
+
+    function resetRecording() {
+      document.getElementById("timer").textContent = "60";
+      document.getElementById("recordBtn").disabled = false;
+    }
+
+    async function submitSpeech() {
+      const audioBlob = window.currentAudioBlob;
+      if (!audioBlob) return alert("Chưa ghi âm!");
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Audio = reader.result;
+
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            name: studentName,
+            pairId: currentPair.id,
+            audioBase64: base64Audio
+          })
+        });
+        const data = await res.json();
+        if (!data.success) return alert("Lỗi: " + data.error);
+
+        document.getElementById("transcript").value = data.transcript;
+        showResult(data, data.score);
+      };
+      reader.readAsDataURL(audioBlob);
+    }
+
+    function showResult(data, score) {
+      document.getElementById("reviewSection").classList.add("hidden");
+      document.getElementById("resultSection").classList.remove("hidden");
+      document.getElementById("scoreText").textContent = `${score}%`;
+      document.getElementById("feedbackText").textContent = score >= 85 ? "Xuất sắc C1!" : score >= 75 ? "Tốt B2!" : "Cố lên!";
+      document.getElementById("cupDisplay").textContent = score >= 85 ? "Gold Cup" : score >= 75 ? "Silver Cup" : "Bronze Cup";
+      if (score >= 80) new Confetti().frame();
+    }
+
+    function nextRound() {
+      document.getElementById("resultSection").classList.add("hidden");
+      loadRandomPair();
+    }
+
+    async function showLeaderboard() {
+      const res = await fetch(SCRIPT_URL + "?action=getLeaderboard");
+      const leaderboard = await res.json();
+      const body = document.getElementById("leaderboardBody");
+      body.innerHTML = "";
+      leaderboard.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "flex justify-between items-center p-3 bg-gray-50 rounded-lg";
+        div.innerHTML = `<span class="font-bold">#${item.rank} ${item.name}</span>
+                         <span>${item.cup} điểm (${item.plays} lần)</span>`;
+        body.appendChild(div);
+      });
+      document.getElementById("leaderboardModal").classList.remove("hidden");
+    }
+
+    function closeLeaderboard() {
+      document.getElementById("leaderboardModal").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
