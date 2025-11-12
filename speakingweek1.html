@@ -116,7 +116,7 @@
 
         <div class="text-center mb-6">
             <div id="timer" class="text-5xl font-bold text-red-600 mb-4">60</div>
-            <button id="recordBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
+            <button id="micBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
                 Giữ để nói
             </button>
             <div id="waveform" class="waveform mt-4 hidden"></div>
@@ -127,7 +127,7 @@
             <audio id="playback" controls class="w-full mb-4"></audio>
             <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="AI đang chấm..."></textarea>
             <div class="flex gap-3">
-                <button onclick="retryRecording()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
+                <button onclick="clearTranscript()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
                 <button onclick="submitSpeech()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">Gửi AI chấm!</button>
             </div>
         </div>
@@ -195,15 +195,21 @@
 
     // === BẮT ĐẦU TRÒ CHƠI ===
     function startGame() {
-        studentName = document.getElementById("studentName").value.trim();
-        if (!studentName) return alert("Vui lòng nhập tên em!");
-        document.getElementById("codeScreen").classList.add("hidden");
-        document.getElementById("gameScreen").classList.remove("hidden");
-        document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
-        loadRandomPair();
-        document.getElementById("reviewSection").classList.add("hidden");
-        document.getElementById("resultSection").classList.add("hidden");
-    }
+    studentName = document.getElementById("studentName").value.trim();
+    if (!studentName) return alert("Vui lòng nhập tên em!");
+    
+    document.getElementById("codeScreen").classList.add("hidden");
+    document.getElementById("gameScreen").classList.remove("hidden");
+    document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
+    
+    loadRandomPair(); // THÊM DÒNG NÀY!
+    
+    // Reset lại trạng thái
+    finalTranscript = "";
+    document.getElementById("transcript").value = "";
+    document.getElementById("reviewSection").classList.add("hidden");
+    document.getElementById("resultSection").classList.add("hidden");
+}
 
     // === TẢI ẢNH NGẪU NHIÊN ===
     function loadRandomPair() {
