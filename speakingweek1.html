@@ -152,242 +152,229 @@
 </div>
 
 <script>
-    // GIỮ NGUYÊN URL CŨ CỦA SPEAKING (KHÔNG ĐỔI!)
+    // === CẤU HÌNH CHUNG ===
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec";
 
-    // 25 CẶP ẢNH CÓ NGƯỜI + HOẠT ĐỘNG (FCE Part 2)
-const IMAGE_PAIRS = [
-    // Cặp 1: Nhóm học vs Nhóm thảo luận
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/group-of-people-1867759_1280.jpg", img2: "https://cdn.pixabay.com/photo/2014/07/08/10/04/group-of-people-386185_1280.jpg", id: 1 },
-    
-    // Cặp 2: Học online vs Tập yoga nhóm
-    { img1: "https://cdn.pixabay.com/photo/2016/11/19/14/00/codec-1835872_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/yoga-2605225_1280.jpg", id: 2 },
-    
-    // Cặp 3: Trẻ em chơi thể thao vs Nhóm nấu ăn
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/05/45/children-1868412_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/cooking-2368633_1280.jpg", id: 3 },
-    
-    // Cặp 4: Lớp học nhóm vs Biểu diễn âm nhạc
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/group-of-people-1868170_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/musicians-1852829_1280.jpg", id: 4 },
-    
-    // Cặp 5: Học vẽ vs Chơi bóng đá
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603488_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/football-1834742_1280.jpg", id: 5 },
-    
-    // Cặp 6: Nhóm tình nguyện vs Đi dã ngoại
-    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/volunteers-829949_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/hiking-1867665_1280.jpg", id: 6 },
-    
-    // Cặp 7: Học khiêu vũ vs Làm vườn
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/dance-2605224_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/27/23/22/gardening-2444584_1280.jpg", id: 7 },
-    
-    // Cặp 8: Tham quan bảo tàng vs Chơi board game
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/museum-1868171_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/board-game-2619564_1280.jpg", id: 8 },
-    
-    // Cặp 9: Tập gym vs Ăn tối gia đình
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/gym-2605226_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/dinner-2368634_1280.jpg", id: 9 },
-    
-    // Cặp 10: Học nhạc vs Chụp ảnh nhóm
-    { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/music-1852828_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/02/18/photography-2603489_1280.jpg", id: 10 },
-    
-    // Cặp 11: Lớp học khoa học vs Chơi cờ
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/science-1867758_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/chess-2619565_1280.jpg", id: 11 },
-    
-    // Cặp 12: Nhóm đọc sách vs Đạp xe
-    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/reading-829950_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/cycling-1867666_1280.jpg", id: 12 },
-    
-    // Cặp 13: Làm thủ công vs Bơi lội
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/crafts-2603490_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/swimming-1834743_1280.jpg", id: 13 },
-    
-    // Cặp 14: Học ngoại ngữ vs Tổ chức tiệc
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/language-1868172_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/party-2368635_1280.jpg", id: 14 },
-    
-    // Cặp 15: Nhóm chạy bộ vs Học toán
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/running-2605227_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/09/11/math-1867757_1280.jpg", id: 15 },
-    
-    // Cặp 16: Vẽ tranh vs Chơi tennis
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/painting-2603491_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/tennis-1834744_1280.jpg", id: 16 },
-    
-    // Cặp 17: Học lịch sử vs Leo núi
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/history-1868173_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/mountaineering-1867667_1280.jpg", id: 17 },
-    
-    // Cặp 18: Nhóm hát vs Nấu ăn đường phố
-    { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/singing-1852830_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/street-food-2368636_1280.jpg", id: 18 },
-    
-    // Cặp 19: Học công nghệ vs Chơi bóng chuyền
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/technology-1867756_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/volleyball-1834745_1280.jpg", id: 19 },
-    
-    // Cặp 20: Đọc báo vs Làm bánh
-    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/newspaper-829951_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/baking-2368637_1280.jpg", id: 20 },
-    
-    // Cặp 21: Học sinh học vs Nhóm du lịch
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/students-1868174_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/travel-1867668_1280.jpg", id: 21 },
-    
-    // Cặp 22: Thực hành thí nghiệm vs Chơi guitar
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/experiment-1867755_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/guitar-1852827_1280.jpg", id: 22 },
-    
-    // Cặp 23: Học viết vs Chạy marathon
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/writing-2603492_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/marathon-2605228_1280.jpg", id: 23 },
-    
-    // Cặp 24: Nhóm nghiên cứu vs Khiêu vũ đường phố
-    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/research-1868175_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/street-dance-2605229_1280.jpg", id: 24 },
-    
-    // Cặp 25: Học nghệ thuật vs Bóng rổ
-    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603493_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/basketball-1834746_1280.jpg", id: 25 }
-];
-
-<script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec"; // Giữ nguyên
-
+    // 25 CẶP ẢNH (GIỮ NGUYÊN CỦA BẠN)
     const IMAGE_PAIRS = [
-      // Giữ nguyên 25 cặp ảnh của bạn
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/group-of-people-1867759_1280.jpg", img2: "https://cdn.pixabay.com/photo/2014/07/08/10/04/group-of-people-386185_1280.jpg", id: 1 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/19/14/00/codec-1835872_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/yoga-2605225_1280.jpg", id: 2 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/05/45/children-1868412_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/cooking-2368633_1280.jpg", id: 3 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/group-of-people-1868170_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/musicians-1852829_1280.jpg", id: 4 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603488_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/football-1834742_1280.jpg", id: 5 },
+        { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/volunteers-829949_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/hiking-1867665_1280.jpg", id: 6 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/dance-2605224_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/27/23/22/gardening-2444584_1280.jpg", id: 7 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/museum-1868171_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/board-game-2619564_1280.jpg", id: 8 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/gym-2605226_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/dinner-2368634_1280.jpg", id: 9 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/music-1852828_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/02/18/photography-2603489_1280.jpg", id: 10 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/science-1867758_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/chess-2619565_1280.jpg", id: 11 },
+        { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/reading-829950_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/cycling-1867666_1280.jpg", id: 12 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/crafts-2603490_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/swimming-1834743_1280.jpg", id: 13 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/language-1868172_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/party-2368635_1280.jpg", id: 14 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/running-2605227_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/09/11/math-1867757_1280.jpg", id: 15 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/painting-2603491_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/tennis-1834744_1280.jpg", id: 16 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/history-1868173_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/mountaineering-1867667_1280.jpg", id: 17 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/singing-1852830_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/street-food-2368636_1280.jpg", id: 18 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/technology-1867756_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/volleyball-1834745_1280.jpg", id: 19 },
+        { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/newspaper-829951_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/baking-2368637_1280.jpg", id: 20 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/students-1868174_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/travel-1867668_1280.jpg", id: 21 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/experiment-1867755_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/guitar-1852827_1280.jpg", id: 22 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/writing-2603492_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/marathon-2605228_1280.jpg", id: 23 },
+        { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/research-1868175_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/street-dance-2605229_1280.jpg", id: 24 },
+        { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603493_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/basketball-1834746_1280.jpg", id: 25 }
     ];
 
+    // === BIẾN TOÀN CỤC ===
     let studentName = "";
     let currentPair = null;
-    let recognition; // Web Speech API
+    let recognition;
     let finalTranscript = "";
     let isRecognizing = false;
     let timerInterval;
     let seconds = 60;
 
+    // === BẮT ĐẦU TRÒ CHƠI ===
     function startGame() {
-      studentName = document.getElementById("studentName").value.trim();
-      if (!studentName) return alert("Vui lòng nhập tên em!");
-      document.getElementById("codeScreen").classList.add("hidden");
-      document.getElementById("gameScreen").classList.remove("hidden");
-      document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
-      loadRandomPair();
+        studentName = document.getElementById("studentName").value.trim();
+        if (!studentName) return alert("Vui lòng nhập tên em!");
+        document.getElementById("codeScreen").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+        document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
+        loadRandomPair();
+        document.getElementById("reviewSection").classList.add("hidden");
+        document.getElementById("resultSection").classList.add("hidden");
     }
 
+    // === TẢI ẢNH NGẪU NHIÊN ===
     function loadRandomPair() {
-      currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
-      document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
-      document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
-      resetTimer();
+        currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
+        document.getElementById("img1").src = currentPair.img1 + `?t=${Date.now()}`;
+        document.getElementById("img2").src = currentPair.img2 + `?t=${Date.now()}`;
+        resetTimer();
+        finalTranscript = "";
+        document.getElementById("transcript").value = "";
     }
 
-    // ===== WEB SPEECH API - GHI ÂM VÀ TRANSCRIPT TỰ ĐỘNG =====
+    // === WEB SPEECH API ===
     function startRecognition() {
-      if (!('webkitSpeechRecognition' in window)) {
-        alert("Trình duyệt không hỗ trợ! Dùng Chrome/Edge.");
-        return;
-      }
-
-      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US'; // Tiếng Anh cho FCE
-
-      recognition.onstart = () => {
-        isRecognizing = true;
-        document.getElementById("micBtn").textContent = "Dừng nói";
-        startTimer();
-      };
-
-      recognition.onresult = (event) => {
-        let interimTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript + ' ';
-          } else {
-            interimTranscript += event.results[i][0].transcript;
-          }
+        if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+            alert("Trình duyệt không hỗ trợ nhận diện giọng nói! Dùng Chrome/Edge.");
+            return;
         }
-        document.getElementById("transcript").value = finalTranscript.trim() + ' ' + interimTranscript;
-      };
 
-      recognition.onerror = (event) => {
-        console.error('Speech error:', event.error);
-        alert('Lỗi nhận diện: ' + event.error);
-      };
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
 
-      recognition.onend = () => {
-        isRecognizing = false;
-        document.getElementById("micBtn").textContent = "Bắt đầu nói";
-        stopTimer();
-      };
+        recognition.onstart = () => {
+            isRecognizing = true;
+            document.getElementById("micBtn").textContent = "Dừng nói";
+            document.getElementById("waveform").classList.remove("hidden");
+            startTimer();
+        };
 
-      recognition.start();
+        recognition.onresult = (event) => {
+            let interim = "";
+            finalTranscript = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript + " ";
+                } else {
+                    interim += event.results[i][0].transcript;
+                }
+            }
+            document.getElementById("transcript").value = finalTranscript + interim;
+        };
+
+        recognition.onerror = (e) => {
+            console.error("Lỗi nhận diện:", e.error);
+            alert("Lỗi: " + e.error);
+            stopRecognition();
+        };
+
+        recognition.onend = () => {
+            isRecognizing = false;
+            document.getElementById("micBtn").textContent = "Bắt đầu nói";
+            document.getElementById("waveform").classList.add("hidden");
+            stopTimer();
+            if (finalTranscript.trim()) {
+                document.getElementById("reviewSection").classList.remove("hidden");
+            }
+        };
+
+        recognition.start();
     }
 
     function stopRecognition() {
-      if (recognition && isRecognizing) {
-        recognition.stop();
-      }
+        if (recognition && isRecognizing) recognition.stop();
     }
 
+    // === TIMER ===
     function startTimer() {
-      seconds = 60;
-      document.getElementById("timer").textContent = seconds;
-      timerInterval = setInterval(() => {
-        seconds--;
-        document.getElementById("timer").textContent = seconds;
-        if (seconds <= 0) stopRecognition();
-      }, 1000);
+        seconds = 60;
+        document.getElementById("timer").textContent = "60";
+        timerInterval = setInterval(() => {
+            seconds--;
+            document.getElementById("timer").textContent = seconds;
+            if (seconds <= 0) {
+                stopRecognition();
+            }
+        }, 1000);
     }
 
     function stopTimer() {
-      clearInterval(timerInterval);
+        clearInterval(timerInterval);
     }
 
     function resetTimer() {
-      stopTimer();
-      document.getElementById("timer").textContent = "60";
+        stopTimer();
+        document.getElementById("timer").textContent = "60";
     }
 
-    function clearTranscript() {
-      finalTranscript = '';
-      document.getElementById("transcript").value = '';
-      resetTimer();
-      document.getElementById("reviewSection").classList.add("hidden");
-    }
-
-    // ===== SUBMIT TRANSCRIPT (KHÔNG GỬI AUDIO) =====
+    // === GỬI BÀI ===
     async function submitSpeech() {
-      const transcript = document.getElementById("transcript").value.trim();
-      if (!transcript) return alert("Chưa có transcript! Hãy nói trước.");
+        const transcript = document.getElementById("transcript").value.trim();
+        if (!transcript) return alert("Chưa nói gì! Hãy nói trước.");
 
-      document.getElementById("reviewSection").classList.add("hidden");
-      
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          name: studentName,
-          pairId: currentPair.id,
-          transcript: transcript // Gửi text thay vì audio
-        })
-      });
-      
-      const data = await res.json();
-      if (!data.success) return alert("Lỗi: " + data.error);
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
 
-      showResult(data, data.score);
+        try {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: studentName,
+                    pairId: currentPair.id,
+                    transcript: transcript
+                })
+            });
+            const data = await res.json();
+
+            if (!data.success) throw new Error(data.error);
+
+            showResult(data);
+        } catch (err) {
+            alert("Lỗi: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = "Gửi AI chấm!";
+        }
     }
 
-    function showResult(data, score) {
-      document.getElementById("resultSection").classList.remove("hidden");
-      document.getElementById("scoreText").textContent = `${score}%`;
-      document.getElementById("feedbackText").textContent = data.feedback || "Cố lên!";
-      // ... (giữ nguyên phần cup, confetti)
+    // === HIỂN THỊ KẾT QUẢ ===
+    function showResult(data) {
+        document.getElementById("resultSection").classList.remove("hidden");
+        document.getElementById("scoreText").textContent = `${data.score}%`;
+        document.getElementById("feedbackText").textContent = data.feedback || "Cố lên em!";
+
+        // Hiệu ứng cúp
+        const cup = data.score >= 90 ? "Vàng" : data.score >= 75 ? "Bạc" : "Đồng";
+        document.getElementById("cupDisplay").textContent = cup;
     }
 
-    // ===== LEADERBOARD GIỮ NGUYÊN =====
+    // === CHƠI TIẾP ===
+    function nextRound() {
+        document.getElementById("resultSection").classList.add("hidden");
+        loadRandomPair();
+    }
+
+    // === BẢNG XẾP HẠNG ===
     async function showLeaderboard() {
-      // ... (giữ nguyên code leaderboard)
+        try {
+            const res = await fetch(SCRIPT_URL + "?action=leaderboard");
+            const data = await res.json();
+            const lb = data.leaderboard || [];
+
+            const body = document.getElementById("leaderboardBody");
+            body.innerHTML = lb.length ? lb.map((p, i) => `
+                <div class="flex justify-between items-center p-2 bg-gray-50 rounded">
+                    <span class="font-bold">#${i+1} ${p.name}</span>
+                    <span class="text-green-600 font-bold">${p.avg} điểm</span>
+                </div>
+            `).join("") : "<p class='text-center text-gray-500'>Chưa có dữ liệu</p>";
+
+            document.getElementById("leaderboardModal").classList.remove("hidden");
+        } catch (err) {
+            alert("Lỗi tải bảng xếp hạng");
+        }
     }
 
     function closeLeaderboard() {
-      // ... (giữ nguyên)
+        document.getElementById("leaderboardModal").classList.add("hidden");
     }
 
-    // Event listeners cho nút mic
+    // === SỰ KIỆN NÚT MIC ===
     document.addEventListener("DOMContentLoaded", () => {
-      const micBtn = document.getElementById("micBtn");
-      micBtn.addEventListener("click", () => {
-        if (isRecognizing) {
-          stopRecognition();
-        } else {
-          startRecognition();
-        }
-      });
+        const micBtn = document.getElementById("micBtn");
+        micBtn.addEventListener("click", () => {
+            if (isRecognizing) {
+                stopRecognition();
+            } else {
+                startRecognition();
+            }
+        });
     });
 </script>
     
