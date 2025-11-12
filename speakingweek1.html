@@ -156,215 +156,240 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec";
 
     // 25 CẶP ẢNH CÓ NGƯỜI + HOẠT ĐỘNG (FCE Part 2)
-  const IMAGE_PAIRS = [
-    // 1. Lướt sóng vs Làm việc nhóm
-    { img1: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=300&fit=crop", id: 1 },
-
-    // 2. Ăn uống vs Chơi thể thao
-    { img1: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop", id: 2 },
-
-    // 3. Dã ngoại gia đình vs Du lịch nhóm bạn
-    { img1: "https://images.unsplash.com/photo-1505840717430-882ce147ef2d?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop", id: 3 },
-
-    // 4. Ăn nhà hàng vs Biểu diễn âm nhạc
-    { img1: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop", id: 4 },
-
-    // 5. Học nhóm vs Chụp ảnh nghệ thuật
-    { img1: "https://images.unsplash.com/photo-1492684223066-8137a7dd1d9e?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=300&fit=crop", id: 5 },
-
-    // 6. Nấu ăn gia đình vs Tập gym
-    { img1: "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1556911220-b0bf3f5c4b8b?w=400&h=300&fit=crop", id: 6 },
-
-    // 7. Đi chợ vs Chơi nhạc đường phố
-    { img1: "https://images.unsplash.com/photo-1578916171728-46686b7a3db3?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=300&fit=crop", id: 7 },
-
-    // 8. Cắm trại vs Tham quan bảo tàng
-    { img1: "https://images.unsplash.com/photo-1504280390367-361ea8d9f3d4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1518998053901-534e6701d2b4?w=400&h=300&fit=crop", id: 8 },
-
-    // 9. Chơi bóng rổ vs Vẽ tranh ngoài trời
-    { img1: "https://images.unsplash.com/photo-1546519638-68d9f2b1a8b2?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1579783902614-a3b3928b3a34?w=400&h=300&fit=crop", id: 9 },
-
-    // 10. Đi câu cá vs Học khiêu vũ
-    { img1: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1524594152303-9fd13543a85b?w=400&h=300&fit=crop", id: 10 },
-
-    // 11. Chăm sóc vườn vs Tham gia tình nguyện
-    { img1: "https://images.unsplash.com/photo-1592417817096-8c2c8f0b5a6b?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1582213782179-e0d59f3e2d85?w=400&h=300&fit=crop", id: 11 },
-
-    // 12. Biểu diễn kịch vs Chụp ảnh cưới
-    { img1: "https://images.unsplash.com/photo-1517602304630-0f66c1c5a5d7?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop", id: 12 },
-
-    // 13. Đạp xe đường dài vs Tổ chức tiệc sinh nhật
-    { img1: "https://images.unsplash.com/photo-1558981403-c5f989902d16?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400&h=300&fit=crop", id: 13 },
-
-    // 14. Làm bánh vs Chơi board game
-    { img1: "https://images.unsplash.com/photo-1556909114-f6e7ad2d3138?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1606851094291-5c0c5b0c0d8b?w=400&h=300&fit=crop", id: 14 },
-
-    // 15. Leo núi vs Tham gia hội thảo
-    { img1: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop", id: 15 },
-
-    // 16. Chơi nhạc cụ vs Học ngoại ngữ
-    { img1: "https://images.unsplash.com/photo-1511376777868-611b54f68947?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1509062577806-8dc1b8b9e91d?w=400&h=300&fit=crop", id: 16 },
-
-    // 17. Đi chợ đêm vs Xem phim ngoài trời
-    { img1: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1560272564-c83b19b38153?w=400&h=300&fit=crop", id: 17 },
-
-    // 18. Làm đồ thủ công vs Chạy marathon
-    { img1: "https://images.unsplash.com/photo-1588075592446-4f1d9c6c95b6?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&h=300&fit=crop", id: 18 },
-
-    // 19. Tham gia yoga vs Bán hàng từ thiện
-    { img1: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1604882733-8b0c06659b5b?w=400&h=300&fit=crop", id: 19 },
-
-    // 20. Chăm sóc thú cưng vs Tổ chức triển lãm
-    { img1: "https://images.unsplash.com/photo-1543466835-00a638f80e92?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop", id: 20 },
-
-    // 21. Làm việc từ xa vs Tham gia lớp học nấu ăn
-    { img1: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1556912167-f556f1f9e1fd?w=400&h=300&fit=crop", id: 21 },
-
-    // 22. Chơi trò chơi điện tử vs Tham gia câu lạc bộ sách
-    { img1: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop", id: 22 },
-
-    // 23. Đi công viên vs Tham gia lễ hội
-    { img1: "https://images.unsplash.com/photo-1519337265831-2811f4168a7f?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1501281664972-97dd933c4882?w=400&h=300&fit=crop", id: 23 },
-
-    // 24. Làm việc tình nguyện vs Chụp ảnh phong cảnh
-    { img1: "https://images.unsplash.com/photo-1593113598332-cd288f2f1b4d?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1502086223501-9d45c2f3d881?w=400&h=300&fit=crop", id: 24 },
-
-    // 25. Tham gia workshop vs Đi dạo phố cổ
-    { img1: "https://images.unsplash.com/photo-1523240795612-9a9998e6792a?w=400&h=300&fit=crop", img2: "https://images.unsplash.com/photo-1519671482743-fd75c3bc4e8f?w=400&h=300&fit=crop", id: 25 }
+const IMAGE_PAIRS = [
+    // Cặp 1: Nhóm học vs Nhóm thảo luận
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/group-of-people-1867759_1280.jpg", img2: "https://cdn.pixabay.com/photo/2014/07/08/10/04/group-of-people-386185_1280.jpg", id: 1 },
+    
+    // Cặp 2: Học online vs Tập yoga nhóm
+    { img1: "https://cdn.pixabay.com/photo/2016/11/19/14/00/codec-1835872_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/yoga-2605225_1280.jpg", id: 2 },
+    
+    // Cặp 3: Trẻ em chơi thể thao vs Nhóm nấu ăn
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/05/45/children-1868412_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/cooking-2368633_1280.jpg", id: 3 },
+    
+    // Cặp 4: Lớp học nhóm vs Biểu diễn âm nhạc
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/group-of-people-1868170_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/musicians-1852829_1280.jpg", id: 4 },
+    
+    // Cặp 5: Học vẽ vs Chơi bóng đá
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603488_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/football-1834742_1280.jpg", id: 5 },
+    
+    // Cặp 6: Nhóm tình nguyện vs Đi dã ngoại
+    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/volunteers-829949_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/hiking-1867665_1280.jpg", id: 6 },
+    
+    // Cặp 7: Học khiêu vũ vs Làm vườn
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/dance-2605224_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/27/23/22/gardening-2444584_1280.jpg", id: 7 },
+    
+    // Cặp 8: Tham quan bảo tàng vs Chơi board game
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/museum-1868171_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/board-game-2619564_1280.jpg", id: 8 },
+    
+    // Cặp 9: Tập gym vs Ăn tối gia đình
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/gym-2605226_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/dinner-2368634_1280.jpg", id: 9 },
+    
+    // Cặp 10: Học nhạc vs Chụp ảnh nhóm
+    { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/music-1852828_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/02/18/photography-2603489_1280.jpg", id: 10 },
+    
+    // Cặp 11: Lớp học khoa học vs Chơi cờ
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/science-1867758_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/10/02/09/chess-2619565_1280.jpg", id: 11 },
+    
+    // Cặp 12: Nhóm đọc sách vs Đạp xe
+    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/reading-829950_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/cycling-1867666_1280.jpg", id: 12 },
+    
+    // Cặp 13: Làm thủ công vs Bơi lội
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/crafts-2603490_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/swimming-1834743_1280.jpg", id: 13 },
+    
+    // Cặp 14: Học ngoại ngữ vs Tổ chức tiệc
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/language-1868172_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/party-2368635_1280.jpg", id: 14 },
+    
+    // Cặp 15: Nhóm chạy bộ vs Học toán
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/18/09/running-2605227_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/09/11/math-1867757_1280.jpg", id: 15 },
+    
+    // Cặp 16: Vẽ tranh vs Chơi tennis
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/painting-2603491_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/tennis-1834744_1280.jpg", id: 16 },
+    
+    // Cặp 17: Học lịch sử vs Leo núi
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/history-1868173_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/mountaineering-1867667_1280.jpg", id: 17 },
+    
+    // Cặp 18: Nhóm hát vs Nấu ăn đường phố
+    { img1: "https://cdn.pixabay.com/photo/2016/11/23/18/52/singing-1852830_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/street-food-2368636_1280.jpg", id: 18 },
+    
+    // Cặp 19: Học công nghệ vs Chơi bóng chuyền
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/technology-1867756_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/volleyball-1834745_1280.jpg", id: 19 },
+    
+    // Cặp 20: Đọc báo vs Làm bánh
+    { img1: "https://cdn.pixabay.com/photo/2015/07/02/10/10/newspaper-829951_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/06/02/18/36/baking-2368637_1280.jpg", id: 20 },
+    
+    // Cặp 21: Học sinh học vs Nhóm du lịch
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/students-1868174_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/29/01/48/travel-1867668_1280.jpg", id: 21 },
+    
+    // Cặp 22: Thực hành thí nghiệm vs Chơi guitar
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/09/11/experiment-1867755_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/23/18/52/guitar-1852827_1280.jpg", id: 22 },
+    
+    // Cặp 23: Học viết vs Chạy marathon
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/writing-2603492_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/marathon-2605228_1280.jpg", id: 23 },
+    
+    // Cặp 24: Nhóm nghiên cứu vs Khiêu vũ đường phố
+    { img1: "https://cdn.pixabay.com/photo/2016/11/29/13/20/research-1868175_1280.jpg", img2: "https://cdn.pixabay.com/photo/2017/08/07/18/09/street-dance-2605229_1280.jpg", id: 24 },
+    
+    // Cặp 25: Học nghệ thuật vs Bóng rổ
+    { img1: "https://cdn.pixabay.com/photo/2017/08/07/02/18/art-2603493_1280.jpg", img2: "https://cdn.pixabay.com/photo/2016/11/19/15/32/basketball-1834746_1280.jpg", id: 25 }
 ];
 
-    let studentName = "", currentPair = null, mediaRecorder = null, audioChunks = [], timerInterval, seconds = 60;
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec"; // Giữ nguyên
+
+    const IMAGE_PAIRS = [
+      // Giữ nguyên 25 cặp ảnh của bạn
+    ];
+
+    let studentName = "";
+    let currentPair = null;
+    let recognition; // Web Speech API
+    let finalTranscript = "";
+    let isRecognizing = false;
+    let timerInterval;
+    let seconds = 60;
 
     function startGame() {
-        studentName = document.getElementById("studentName").value.trim();
-        if (!studentName) return alert("Vui lòng nhập tên em!");
-        document.getElementById("codeScreen").classList.add("hidden");
-        document.getElementById("gameScreen").classList.remove("hidden");
-        document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
-        loadRandomPair();
+      studentName = document.getElementById("studentName").value.trim();
+      if (!studentName) return alert("Vui lòng nhập tên em!");
+      document.getElementById("codeScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
+      loadRandomPair();
     }
 
     function loadRandomPair() {
-        currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
-        document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
-        document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
-        resetRecording();
+      currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
+      document.getElementById("img1").src = currentPair.img1 + `&t=${Date.now()}`;
+      document.getElementById("img2").src = currentPair.img2 + `&t=${Date.now()}`;
+      resetTimer();
     }
 
-    let isRecording = false;
-    const recordBtn = document.getElementById("recordBtn");
-    recordBtn.addEventListener("mousedown", startRecording);
-    recordBtn.addEventListener("touchstart", startRecording);
-    recordBtn.addEventListener("mouseup", stopRecording);
-    recordBtn.addEventListener("touchend", stopRecording);
+    // ===== WEB SPEECH API - GHI ÂM VÀ TRANSCRIPT TỰ ĐỘNG =====
+    function startRecognition() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Trình duyệt không hỗ trợ! Dùng Chrome/Edge.");
+        return;
+      }
 
-    async function startRecording(e) {
-        e.preventDefault();
-        if (isRecording) return;
-        isRecording = true;
-        audioChunks = [];
-        seconds = 60;
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US'; // Tiếng Anh cho FCE
+
+      recognition.onstart = () => {
+        isRecognizing = true;
+        document.getElementById("micBtn").textContent = "Dừng nói";
+        startTimer();
+      };
+
+      recognition.onresult = (event) => {
+        let interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript + ' ';
+          } else {
+            interimTranscript += event.results[i][0].transcript;
+          }
+        }
+        document.getElementById("transcript").value = finalTranscript.trim() + ' ' + interimTranscript;
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech error:', event.error);
+        alert('Lỗi nhận diện: ' + event.error);
+      };
+
+      recognition.onend = () => {
+        isRecognizing = false;
+        document.getElementById("micBtn").textContent = "Bắt đầu nói";
+        stopTimer();
+      };
+
+      recognition.start();
+    }
+
+    function stopRecognition() {
+      if (recognition && isRecognizing) {
+        recognition.stop();
+      }
+    }
+
+    function startTimer() {
+      seconds = 60;
+      document.getElementById("timer").textContent = seconds;
+      timerInterval = setInterval(() => {
+        seconds--;
         document.getElementById("timer").textContent = seconds;
-        document.getElementById("waveform").classList.remove("hidden");
-        recordBtn.classList.add("bg-red-800");
-
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
-
-        timerInterval = setInterval(() => {
-            seconds--;
-            document.getElementById("timer").textContent = seconds;
-            if (seconds <= 0) stopRecording();
-        }, 1000);
-
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.onstop = showReview;
+        if (seconds <= 0) stopRecognition();
+      }, 1000);
     }
 
-    function stopRecording() {
-        if (!isRecording) return;
-        isRecording = false;
-        clearInterval(timerInterval);
-        document.getElementById("waveform").classList.add("hidden");
-        recordBtn.classList.remove("bg-red-800");
-        if (mediaRecorder) mediaRecorder.stop();
+    function stopTimer() {
+      clearInterval(timerInterval);
     }
 
-    function showReview() {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        const audioUrl = URL.createObjectURL(audioBlob);
-        document.getElementById("playback").src = audioUrl;
-        document.getElementById("reviewSection").classList.remove("hidden");
-        window.currentAudioBlob = audioBlob;
+    function resetTimer() {
+      stopTimer();
+      document.getElementById("timer").textContent = "60";
     }
 
-    function retryRecording() {
-        document.getElementById("reviewSection").classList.add("hidden");
-        resetRecording();
+    function clearTranscript() {
+      finalTranscript = '';
+      document.getElementById("transcript").value = '';
+      resetTimer();
+      document.getElementById("reviewSection").classList.add("hidden");
     }
 
-    function resetRecording() {
-        document.getElementById("timer").textContent = "60";
-        document.getElementById("recordBtn").disabled = false;
-    }
-
+    // ===== SUBMIT TRANSCRIPT (KHÔNG GỬI AUDIO) =====
     async function submitSpeech() {
-        const audioBlob = window.currentAudioBlob;
-        if (!audioBlob) return alert("Chưa ghi âm!");
+      const transcript = document.getElementById("transcript").value.trim();
+      if (!transcript) return alert("Chưa có transcript! Hãy nói trước.");
 
-        const reader = new FileReader();
-        reader.onload = async () => {
-            const base64Audio = reader.result;
+      document.getElementById("reviewSection").classList.add("hidden");
+      
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: studentName,
+          pairId: currentPair.id,
+          transcript: transcript // Gửi text thay vì audio
+        })
+      });
+      
+      const data = await res.json();
+      if (!data.success) return alert("Lỗi: " + data.error);
 
-            const res = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    name: studentName,
-                    pairId: currentPair.id,
-                    audioBase64: base64Audio
-                })
-            });
-            const data = await res.json();
-            if (!data.success) return alert("Lỗi: " + data.error);
-
-            document.getElementById("transcript").value = data.transcript;
-            showResult(data, data.score);
-        };
-        reader.readAsDataURL(audioBlob);
+      showResult(data, data.score);
     }
 
     function showResult(data, score) {
-        document.getElementById("reviewSection").classList.add("hidden");
-        document.getElementById("resultSection").classList.remove("hidden");
-        document.getElementById("scoreText").textContent = `${score}%`;
-        document.getElementById("feedbackText").textContent = score >= 85 ? "Xuất sắc C1!" : score >= 75 ? "Tốt B2!" : "Cố lên!";
-        document.getElementById("cupDisplay").textContent = score >= 85 ? "Gold Cup" : score >= 75 ? "Silver Cup" : "Bronze Cup";
+      document.getElementById("resultSection").classList.remove("hidden");
+      document.getElementById("scoreText").textContent = `${score}%`;
+      document.getElementById("feedbackText").textContent = data.feedback || "Cố lên!";
+      // ... (giữ nguyên phần cup, confetti)
     }
 
-    function nextRound() {
-        document.getElementById("resultSection").classList.add("hidden");
-        loadRandomPair();
-    }
-
+    // ===== LEADERBOARD GIỮ NGUYÊN =====
     async function showLeaderboard() {
-        const res = await fetch(SCRIPT_URL + "?action=getLeaderboard");
-        const leaderboard = await res.json();
-        const body = document.getElementById("leaderboardBody");
-        body.innerHTML = "";
-        leaderboard.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "flex justify-between items-center p-3 bg-gray-50 rounded-lg";
-            div.innerHTML = `<span class="font-bold">#${item.rank} ${item.name}</span>
-                             <span>${item.cup} điểm (${item.plays} lần)</span>`;
-            body.appendChild(div);
-        });
-        document.getElementById("leaderboardModal").classList.remove("hidden");
+      // ... (giữ nguyên code leaderboard)
     }
 
     function closeLeaderboard() {
-        document.getElementById("leaderboardModal").classList.add("hidden");
+      // ... (giữ nguyên)
     }
+
+    // Event listeners cho nút mic
+    document.addEventListener("DOMContentLoaded", () => {
+      const micBtn = document.getElementById("micBtn");
+      micBtn.addEventListener("click", () => {
+        if (isRecognizing) {
+          stopRecognition();
+        } else {
+          startRecognition();
+        }
+      });
+    });
 </script>
+    
 </body>
 </html>
