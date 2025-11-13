@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FCE Speaking Week 1 - Trung Tâm Tiếng Anh LIME</title>
+    <title>FCE Speaking Week 1 - LIME</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #81C784 100%);
-        }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
         .spinner {
             border: 3px solid #f3f3f3;
@@ -28,35 +23,31 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .hidden { display: none; }
-        .waveform { height: 60px; background: linear-gradient(to right, #10b981, #3b82f6); border-radius: 8px; animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .waveform { 
+            height: 60px; 
+            background: linear-gradient(to right, #10b981, #3b82f6); 
+            border-radius: 8px; 
+            animation: pulse 1s infinite; 
+        }
+        @keyframes pulse { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.7; } 
+        }
     </style>
 </head>
 <body>
 
-<!-- MÀN HÌNH NHẬP MÃ -->
-<div id="codeScreen" class="min-h-screen p-4 fade-in">
+<!-- MÀN HÌNH NHẬP TÊN -->
+<div id="codeScreen" class="min-h-screen p-4">
     <div class="max-w-2xl mx-auto">
         <div class="bg-white rounded-2xl shadow-2xl p-8 mt-8">
             <div class="text-center mb-8">
                 <img src="https://gofirst.pro/images/uploads/62/baseimg/logo_16541442053.png" 
                      alt="LIME Logo" class="w-32 h-32 mx-auto mb-4 object-contain">
                 <h1 class="text-4xl font-bold text-green-700 mb-2">Trung Tâm Tiếng Anh LIME</h1>
-                <p class="text-green-600 text-lg">Hotline: 0976222792</p>
-                <div class="mt-4 h-1 w-32 bg-green-500 mx-auto rounded"></div>
+                <p class="text-green-600 text-lg">FCE SPEAKING - WEEK 1</p>
             </div>
             
-            <div class="bg-green-50 rounded-xl p-6 mb-6">
-                <h2 class="text-2xl font-bold text-green-800 mb-4">FCE SPEAKING - WEEK 1</h2>
-                <div class="space-y-2 text-green-700">
-                    <p>Part 2: So sánh 2 ảnh (60 giây)</p>
-                    <p>AI Judge chấm điểm tự động</p>
-                    <p>Nghe lại + gửi nhiều lần</p>
-                    <p>Bảng xếp hạng theo điểm</p>
-                </div>
-            </div>
-
             <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
                 <div class="flex items-start gap-2">
                     <svg class="w-6 h-6 text-yellow-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,8 +55,8 @@
                     </svg>
                     <div class="text-yellow-800 text-sm">
                         <p class="font-bold mb-1">Lưu ý:</p>
+                        <p>• Phải nhập đúng tên trong danh sách</p>
                         <p>• Giữ nút để nói, thả để dừng</p>
-                        <p>• Có thể nói lại nhiều lần</p>
                         <p>• AI chấm theo tiêu chí FCE</p>
                     </div>
                 </div>
@@ -75,10 +66,11 @@
                 <label class="block text-green-800 font-semibold mb-2">Tên học sinh *</label>
                 <input type="text" id="studentName" 
                     class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:border-green-500 focus:outline-none"
-                    placeholder="Nhập tên em (VD: Nguyễn Văn A)">
+                    placeholder="VD: An, Bình, Minh...">
+                <p id="nameError" class="text-red-600 text-sm mt-1 hidden"></p>
             </div>
 
-            <button onclick="startGame()" 
+            <button onclick="startGame()" id="startBtn"
                 class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
                 BẮT ĐẦU CHƠI!
             </button>
@@ -91,25 +83,26 @@
     <div class="bg-white rounded-2xl shadow-lg p-6 mb-4">
         <div class="flex justify-between items-center mb-4">
             <h2 id="studentInfo" class="text-2xl font-bold text-green-700"></h2>
-            <button onclick="showLeaderboard()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold">Bảng Xếp Hạng</button>
+            <button onclick="showLeaderboard()" class="bg-yellow-500 text-white px-4 py-2 rounded-lg font-bold">
+                Bảng Xếp Hạng
+            </button>
         </div>
 
-        <!-- CÂU HỎI PHỤ FCE PART 2 -->
         <div class="bg-blue-50 border-l-4 border-blue-600 p-4 mb-6 rounded-r-xl">
             <p class="text-blue-800 font-bold mb-2">Câu hỏi:</p>
             <p class="text-blue-700 text-lg">
                 <strong>So sánh 2 ảnh và nói:</strong><br>
-                <em>“Tại sao những người trong ảnh lại làm những việc đó?”</em>
+                <em>"Tại sao những người trong ảnh lại làm những việc đó?"</em>
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="relative">
-                <img id="img1" class="w-full rounded-xl shadow-m d transform rotate-6" src="" alt="Ảnh 1" />
+                <img id="img1" class="w-full rounded-xl shadow-md" src="" alt="Ảnh 1" />
                 <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 1</div>
             </div>
             <div class="relative">
-                <img id="img2" class="w-full rounded-xl shadow-md transform -rotate-6" src="" alt="Ảnh 2" />
+                <img id="img2" class="w-full rounded-xl shadow-md" src="" alt="Ảnh 2" />
                 <div class="absolute top-2 left-2 bg-blue-500 text-white px-3 py-1 rounded-full font-bold">Ảnh 2</div>
             </div>
         </div>
@@ -125,10 +118,14 @@
         <div id="reviewSection" class="hidden bg-gray-50 p-6 rounded-xl">
             <h3 class="text-xl font-bold mb-3">Nghe lại & Gửi</h3>
             <audio id="playback" controls class="w-full mb-4"></audio>
-            <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="AI đang chấm..."></textarea>
+            <textarea id="transcript" class="w-full p-3 border rounded-lg h-32 mb-4" readonly placeholder="Transcript..."></textarea>
             <div class="flex gap-3">
-                <button onclick="clearTranscript()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">Nói lại</button>
-                <button onclick="submitSpeech()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">Gửi AI chấm!</button>
+                <button onclick="clearTranscript()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
+                    Nói lại
+                </button>
+                <button onclick="submitSpeech()" id="submitBtn" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                    Gửi AI chấm!
+                </button>
             </div>
         </div>
     </div>
@@ -137,83 +134,104 @@
         <h3 class="text-3xl font-bold mb-4">Kết quả!</h3>
         <p id="scoreText" class="text-5xl font-bold mb-2"></p>
         <p id="feedbackText" class="text-xl mb-4"></p>
-        <div id="cupDisplay" class="text-6xl mb-4"></div>
-        <button onclick="nextRound()" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">Chơi tiếp!</button>
+        <div id="detailsText" class="text-sm mb-4"></div>
+        <button onclick="nextRound()" class="bg-white text-green-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">
+            Chơi tiếp!
+        </button>
     </div>
 </div>
 
-<!-- LEADERBOARD -->
+<!-- LEADERBOARD MODAL -->
 <div id="leaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
         <h3 class="text-2xl font-bold text-center text-green-700 mb-4">Bảng Xếp Hạng</h3>
         <div id="leaderboardBody" class="space-y-2 max-h-96 overflow-y-auto"></div>
-        <button onclick="closeLeaderboard()" class="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg font-bold">Đóng</button>
+        <button onclick="closeLeaderboard()" class="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg font-bold">
+            Đóng
+        </button>
     </div>
 </div>
 
 <script>
-    // === CẤU HÌNH CHUNG ===
+    // === CẤU HÌNH ===
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec";
 
-    // 25 CẶP ẢNH
     const IMAGE_PAIRS = [
         { img1: "https://loremflickr.com/400/300/study,group", img2: "https://loremflickr.com/400/300/discuss,team", id: 1 },
         { img1: "https://loremflickr.com/400/300/online,learning", img2: "https://loremflickr.com/400/300/yoga,people", id: 2 },
         { img1: "https://loremflickr.com/400/300/kids,play", img2: "https://loremflickr.com/400/300/cooking,family", id: 3 },
         { img1: "https://loremflickr.com/400/300/classroom,student", img2: "https://loremflickr.com/400/300/music,band", id: 4 },
-        { img1: "https://loremflickr.com/400/300/art,painting", img2: "https://loremflickr.com/400/300/soccer,team", id: 5 },
-        { img1: "https://loremflickr.com/400/300/volunteer,help", img2: "https://loremflickr.com/400/300/hiking,group", id: 6 },
-        { img1: "https://loremflickr.com/400/300/dance,people", img2: "https://loremflickr.com/400/400/garden,family", id: 7 },
-        { img1: "https://loremflickr.com/400/300/museum,visit", img2: "https://loremflickr.com/400/300/boardgame,play", id: 8 },
-        { img1: "https://loremflickr.com/400/300/gym,workout", img2: "https://loremflickr.com/400/300/dinner,family", id: 9 },
-        { img1: "https://loremflickr.com/400/300/music,lesson", img2: "https://loremflickr.com/400/300/photography,shoot", id: 10 },
-        { img1: "https://loremflickr.com/400/300/science,lab", img2: "https://loremflickr.com/400/300/chess,play", id: 11 },
-        { img1: "https://loremflickr.com/400/300/reading,book", img2: "https://loremflickr.com/400/300/cycling,ride", id: 12 },
-        { img1: "https://loremflickr.com/400/300/craft,make", img2: "https://loremflickr.com/400/300/swim,people", id: 13 },
-        { img1: "https://loremflickr.com/400/300/language,class", img2: "https://loremflickr.com/400/300/party,celebrate", id: 14 },
-        { img1: "https://loremflickr.com/400/300/run,marathon", img2: "https://loremflickr.com/400/300/math,study", id: 15 },
-        { img1: "https://loremflickr.com/400/300/paint,art", img2: "https://loremflickr.com/400/300/tennis,play", id: 16 },
-        { img1: "https://loremflickr.com/400/300/history,learn", img2: "https://loremflickr.com/400/300/climb,mountain", id: 17 },
-        { img1: "https://loremflickr.com/400/300/sing,choir", img2: "https://loremflickr.com/400/300/streetfood,eat", id: 18 },
-        { img1: "https://loremflickr.com/400/300/tech,code", img2: "https://loremflickr.com/400/300/volleyball,team", id: 19 },
-        { img1: "https://loremflickr.com/400/300/newspaper,read", img2: "https://loremflickr.com/400/300/bake,cake", id: 20 },
-        { img1: "https://loremflickr.com/400/300/student,study", img2: "https://loremflickr.com/400/300/travel,group", id: 21 },
-        { img1: "https://loremflickr.com/400/300/experiment,lab", img2: "https://loremflickr.com/400/300/guitar,play", id: 22 },
-        { img1: "https://loremflickr.com/400/300/write,essay", img2: "https://loremflickr.com/400/300/marathon,run", id: 23 },
-        { img1: "https://loremflickr.com/400/300/research,book", img2: "https://loremflickr.com/400/300/dance,street", id: 24 },
-        { img1: "https://loremflickr.com/400/300/art,create", img2: "https://loremflickr.com/400/300/basketball,team", id: 25 }
+        { img1: "https://loremflickr.com/400/300/art,painting", img2: "https://loremflickr.com/400/300/soccer,team", id: 5 }
     ];
 
-    // === BIẾN TOÀN CỤC ===
     let studentName = "";
+    let studentID = "";
     let currentPair = null;
     let recognition, mediaRecorder, audioChunks = [];
     let finalTranscript = "";
     let isRecognizing = false;
     let timerInterval, timeLeft = 60;
 
-    // === BẮT ĐẦU TRÒ CHƠI ===
-    function startGame() {
-        studentName = document.getElementById("studentName").value.trim();
-        if (!studentName) return alert("Vui lòng nhập tên em!");
+    // === KIỂM TRA VÀ BẮT ĐẦU ===
+    async function startGame() {
+        const nameInput = document.getElementById("studentName").value.trim();
+        const errorEl = document.getElementById("nameError");
+        const btn = document.getElementById("startBtn");
         
-        document.getElementById("codeScreen").classList.add("hidden");
-        document.getElementById("gameScreen").classList.remove("hidden");
-        document.getElementById("studentInfo").textContent = `${studentName} – FCE Speaking Week 1`;
-        
-        loadRandomPair();
-        finalTranscript = "";
-        document.getElementById("transcript").value = "";
-        document.getElementById("reviewSection").classList.add("hidden");
-        document.getElementById("resultSection").classList.add("hidden");
+        if (!nameInput) {
+            errorEl.textContent = "Vui lòng nhập tên!";
+            errorEl.classList.remove("hidden");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Đang kiểm tra...';
+
+        try {
+            const res = await fetch(SCRIPT_URL + `?action=checkStudent&name=${encodeURIComponent(nameInput)}`);
+            const data = await res.json();
+
+            if (!data.success) {
+                throw new Error(data.error || "Lỗi kết nối");
+            }
+
+            if (!data.found) {
+                errorEl.textContent = "Tên không có trong danh sách học sinh!";
+                errorEl.classList.remove("hidden");
+                btn.disabled = false;
+                btn.innerHTML = "BẮT ĐẦU CHƠI!";
+                return;
+            }
+
+            // OK - vào game
+            studentName = nameInput;
+            studentID = data.id;
+            
+            document.getElementById("codeScreen").classList.add("hidden");
+            document.getElementById("gameScreen").classList.remove("hidden");
+            document.getElementById("studentInfo").textContent = `${studentName} (${data.target || "FCE"})`;
+            
+            loadRandomPair();
+            setupMicButton();
+
+        } catch (err) {
+            errorEl.textContent = "Lỗi kết nối: " + err.message;
+            errorEl.classList.remove("hidden");
+            btn.disabled = false;
+            btn.innerHTML = "BẮT ĐẦU CHƠI!";
+        }
     }
 
-    // === TẢI ẢNH NGẪU NHIÊN ===
+    // === TẢI ẢNH ===
     function loadRandomPair() {
         currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
         document.getElementById("img1").src = currentPair.img1 + `?t=${Date.now()}`;
         document.getElementById("img2").src = currentPair.img2 + `?t=${Date.now()}`;
         resetTimer();
+        finalTranscript = "";
+        document.getElementById("transcript").value = "";
+        document.getElementById("reviewSection").classList.add("hidden");
+        document.getElementById("resultSection").classList.add("hidden");
     }
 
     // === TIMER ===
@@ -221,14 +239,15 @@
         clearInterval(timerInterval);
         timeLeft = 60;
         document.getElementById("timer").textContent = "60";
+    }
 
+    function startTimer() {
         timerInterval = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").textContent = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById("timer").textContent = "0";
-                alert("Hết giờ! Nhưng bạn vẫn có thể nói tiếp để hoàn thành câu.");
             }
         }, 1000);
     }
@@ -237,10 +256,30 @@
         clearInterval(timerInterval);
     }
 
+    // === MIC SETUP ===
+    function setupMicButton() {
+        const micBtn = document.getElementById("micBtn");
+        
+        micBtn.addEventListener("mousedown", startRecognition);
+        micBtn.addEventListener("mouseup", stopAndReview);
+        
+        micBtn.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            startRecognition();
+        });
+        
+        micBtn.addEventListener("touchend", (e) => {
+            e.preventDefault();
+            stopAndReview();
+        });
+    }
+
     // === SPEECH RECOGNITION ===
     function startRecognition() {
+        if (isRecognizing) return;
+        
         if (!('webkitSpeechRecognition' in window)) {
-            alert("Dùng Chrome/Edge!");
+            alert("Vui lòng dùng Chrome/Edge!");
             return;
         }
 
@@ -255,73 +294,87 @@
             audioChunks = [];
 
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            
             mediaRecorder.onstop = () => {
                 const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                // FIX: createObjectURL thay vì createObjectObject
                 document.getElementById("playback").src = URL.createObjectURL(blob);
             };
-        }).catch(err => console.error("Mic error:", err));
+        }).catch(err => {
+            console.error("Mic error:", err);
+            alert("Không thể truy cập micro!");
+        });
 
         recognition.onresult = (e) => {
-            let final = "", interim = "";
+            let final = "";
             for (let i = e.resultIndex; i < e.results.length; i++) {
                 const t = e.results[i][0].transcript;
-                if (e.results[i].isFinal) final += t + " ";
-                else interim += t;
+                if (e.results[i].isFinal) {
+                    final += t + " ";
+                }
             }
-            finalTranscript = final;
-            document.getElementById("transcript").value = final + interim;
+            if (final) {
+                finalTranscript += final;
+                document.getElementById("transcript").value = finalTranscript;
+            }
         };
 
-        recognition.onerror = () => stopRecognition();
+        recognition.onerror = (e) => {
+            console.error("Recognition error:", e);
+            stopRecognition();
+        };
+
         recognition.onend = () => {
-            if (isRecognizing) recognition.start();
+            if (isRecognizing) {
+                recognition.start();
+            }
         };
 
         recognition.start();
         isRecognizing = true;
-        document.getElementById("micBtn").textContent = "Dừng nói";
+        
+        document.getElementById("micBtn").textContent = "Đang nói... (Thả để dừng)";
+        document.getElementById("micBtn").classList.add("bg-blue-600");
         document.getElementById("waveform").classList.remove("hidden");
-        resetTimer();
+        
+        startTimer();
     }
 
     function stopRecognition() {
-        if (recognition) recognition.stop();
+        if (recognition) {
+            recognition.stop();
+        }
         isRecognizing = false;
     }
 
-    function stopRecordingAndShowReview() {
-        if (mediaRecorder) mediaRecorder.stop();
+    function stopAndReview() {
+        stopRecognition();
+        
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.stop();
+        }
+        
         stopTimer();
+        
         document.getElementById("micBtn").textContent = "Bắt đầu nói";
+        document.getElementById("micBtn").classList.remove("bg-blue-600");
         document.getElementById("waveform").classList.add("hidden");
 
         if (finalTranscript.trim()) {
-            document.getElementById("transcript").value = finalTranscript.trim();
             document.getElementById("reviewSection").classList.remove("hidden");
         }
     }
 
-    // === DOM LOADED – CHỜ HTML LOAD XONG ===
-    document.addEventListener("DOMContentLoaded", () => {
-        const micBtn = document.getElementById("micBtn");
-        if (!micBtn) return console.error("Không tìm thấy #micBtn!");
-
-        micBtn.addEventListener("click", () => {
-            if (isRecognizing) {
-                stopRecognition();
-                stopRecordingAndShowReview();
-            } else {
-                startRecognition();
-            }
-        });
-    });
-
     // === GỬI BÀI ===
     async function submitSpeech() {
         const transcript = document.getElementById("transcript").value.trim();
-        if (!transcript) return alert("Chưa có lời nói!");
+        
+        if (!transcript) {
+            alert("Chưa có lời nói!");
+            return;
+        }
 
-        const btn = event.target;
+        const btn = document.getElementById("submitBtn");
         btn.disabled = true;
         btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
 
@@ -329,13 +382,23 @@
             const res = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: studentName, transcript })
+                body: JSON.stringify({ 
+                    action: "submit",
+                    name: studentName, 
+                    transcript 
+                })
             });
+
             const data = await res.json();
-            if (!data.success) throw new Error(data.error || "Lỗi server");
+            
+            if (!data.success) {
+                throw new Error(data.error || "Lỗi server");
+            }
+
             showResult(data);
+
         } catch (err) {
-            alert("Lỗi gửi: " + err.message);
+            alert("Lỗi gửi bài: " + err.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = "Gửi AI chấm!";
@@ -346,9 +409,18 @@
     function showResult(data) {
         document.getElementById("resultSection").classList.remove("hidden");
         document.getElementById("scoreText").textContent = `${data.score}%`;
-        document.getElementById("feedbackText").textContent = data.feedback || "Cố lên em!";
-        const cup = data.score >= 90 ? "Vàng" : data.score >= 75 ? "Bạc" : "Đồng";
-        document.getElementById("cupDisplay").textContent = cup;
+        document.getElementById("feedbackText").textContent = data.feedback || "Cố lên!";
+        
+        if (data.details) {
+            document.getElementById("detailsText").innerHTML = `
+                <div class="bg-white/20 p-3 rounded">
+                    Grammar: ${data.details.grammar}/5 | 
+                    Vocab: ${data.details.vocab}/5 | 
+                    Discourse: ${data.details.discourse}/5 | 
+                    Interactive: ${data.details.interactive}/5
+                </div>
+            `;
+        }
     }
 
     // === CHƠI TIẾP ===
@@ -357,34 +429,42 @@
         loadRandomPair();
     }
 
-    // === BẢNG XẾP HẠNG ===
-    async function showLeaderboard() {
-        try {
-            const res = await fetch(SCRIPT_URL + "?action=leaderboard");
-            const data = await res.json();
-            const lb = data.leaderboard || [];
-            const body = document.getElementById("leaderboardBody");
-            body.innerHTML = lb.length ? lb.map((p, i) => `
-                <div class="flex justify-between p-2 bg-gray-50 rounded">
-                    <span class="font-bold">#${i+1} ${p.name}</span>
-                    <span class="text-green-600 font-bold">${p.avg} điểm</span>
-                </div>
-            `).join("") : "<p class='text-center text-gray-500'>Chưa có dữ liệu</p>";
-            document.getElementById("leaderboardModal").classList.remove("hidden");
-        } catch (err) {
-            alert("Lỗi tải bảng xếp hạng");
-        }
-    }
-
-    function closeLeaderboard() {
-        document.getElementById("leaderboardModal").classList.add("hidden");
-    }
-
+    // === CLEAR ===
     function clearTranscript() {
         finalTranscript = "";
         document.getElementById("transcript").value = "";
         document.getElementById("playback").src = "";
         document.getElementById("reviewSection").classList.add("hidden");
+    }
+
+    // === LEADERBOARD ===
+    async function showLeaderboard() {
+        try {
+            const res = await fetch(SCRIPT_URL + "?action=leaderboard");
+            const data = await res.json();
+            
+            const lb = data.leaderboard || [];
+            const body = document.getElementById("leaderboardBody");
+            
+            if (lb.length === 0) {
+                body.innerHTML = "<p class='text-center text-gray-500'>Chưa có dữ liệu</p>";
+            } else {
+                body.innerHTML = lb.map((p, i) => `
+                    <div class="flex justify-between p-3 bg-gray-50 rounded hover:bg-gray-100">
+                        <span class="font-bold">#${p.rank} ${p.name}</span>
+                        <span class="text-green-600 font-bold">${p.avg}</span>
+                    </div>
+                `).join("");
+            }
+            
+            document.getElementById("leaderboardModal").classList.remove("hidden");
+        } catch (err) {
+            alert("Lỗi tải bảng xếp hạng: " + err.message);
+        }
+    }
+
+    function closeLeaderboard() {
+        document.getElementById("leaderboardModal").classList.add("hidden");
     }
 </script>
 
