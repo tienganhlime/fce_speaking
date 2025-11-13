@@ -212,14 +212,27 @@
 }
 
     // === TẢI ẢNH NGẪU NHIÊN ===
-    function loadRandomPair() {
-        currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
-        document.getElementById("img1").src = currentPair.img1 + `?t=${Date.now()}`;
-        document.getElementById("img2").src = currentPair.img2 + `?t=${Date.now()}`;
-        resetTimer();
-        finalTranscript = "";
-        document.getElementById("transcript").value = "";
+   function loadRandomPair() {
+    // GÁN currentPair TRƯỚC
+    currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
+    
+    // GÁN src SAU KHI currentPair ĐÃ CÓ
+    const img1 = document.getElementById("img1");
+    const img2 = document.getElementById("img2");
+    
+    if (!img1 || !img2) {
+        console.error("Không tìm thấy img1 hoặc img2!");
+        return;
     }
+    
+    img1.src = currentPair.img1 + `?t=${Date.now()}`;
+    img2.src = currentPair.img2 + `?t=${Date.now()}`;
+    
+    // Reset timer SAU CÙNG
+    resetTimer();
+    finalTranscript = "";
+    document.getElementById("transcript").value = "";
+}
 
     // === WEB SPEECH API ===
     function startRecognition() {
