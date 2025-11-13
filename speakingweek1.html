@@ -518,16 +518,19 @@ async function checkStudent() {
     if (!name) return alert("Vui lòng nhập tên!");
 
     try {
-        const res = await fetch(`${SCRIPT_URL}?action=checkStudent&name=${encodeURIComponent(name)}`, {
-            method: 'GET',
-            mode: 'no-cors' // Bỏ qua CORS
-        });
-        // no-cors → không đọc được response → giả lập
-        // Thay bằng gọi GET có thể đọc (Apps Script cho phép)
-        // Dùng URL trực tiếp + parse thủ công
-        const text = await fetch(`${SCRIPT_URL}?action=checkStudent&name=${encodeURIComponent(name)}`).then(r => r.text());
+        const url = `${SCRIPT_URL}?action=checkStudent&name=${encodeURIComponent(name)}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) throw new Error("Lỗi mạng");
+
+        const text = await response.text();
         let data;
-        try { data = JSON.parse(text); } catch { data = { found: false }; }
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("JSON parse error:", text);
+            throw new Error("Phản hồi không hợp lệ");
+        }
 
         if (data.found) {
             window.studentName = name;
@@ -540,7 +543,8 @@ async function checkStudent() {
             alert("Không tìm thấy tên trong danh sách!");
         }
     } catch (err) {
-        alert("Lỗi kiểm tra tên!");
+        console.error("Check student error:", err);
+        alert("Lỗi kiểm tra tên: " + err.message);
     }
 }
 
