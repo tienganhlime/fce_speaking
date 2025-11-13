@@ -398,59 +398,62 @@
 
     // === GỬI BÀI ===
     async function submitSpeech() {
-        const transcript = document.getElementById("transcript").value.trim();
-        if (!transcript) return alert("Chưa có lời nói!");
+    const transcript = document.getElementById("transcript").value.trim();
+    if (!transcript) return alert("Chưa có lời nói!");
 
-        const saveAudio = document.getElementById("saveAudioCheckbox").checked;
-        const btn = document.getElementById("submitBtn");
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Đang gửi...';
+    const saveAudio = document.getElementById("saveAudioCheckbox").checked;
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Đang gửi...';
 
-        try {
-            const payload = {
-                action: "submit",
-                name: studentName,
-                id: studentID,
-                target: studentTarget,
-                transcript: transcript,
-                saveAudio: saveAudio
-            };
+    try {
+        const payload = {
+            action: "submit",
+            name: studentName,
+            id: studentID,
+            target: studentTarget,
+            transcript: transcript,
+            saveAudio: saveAudio
+        };
 
-            if (saveAudio && audioBlob) {
-                payload.audioData = await blobToBase64(audioBlob);
-                payload.audioName = `${studentName}_${Date.now()}.webm`;
-            }
-
-            // Gửi POST
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                headers: { 'Content-Type': 'text/plain' } // Apps Script yêu cầu
-            });
-
-            // Đợi 2s rồi lấy kết quả mới nhất
-            setTimeout(async () => {
-                try {
-                    const res = await fetch(`${SCRIPT_URL}?action=getResult&id=${studentID}&t=${Date.now()}`);
-                    const result = await res.json();
-                    if (result.success) {
-                        showResult(result);
-                    } else {
-                        showResult({ score: 0, feedback: "Lỗi chấm điểm!" });
-                    }
-                } catch {
-                    showResult({ score: 75, feedback: "Đã gửi! Kết quả sẽ được cập nhật sau." });
-                }
-                btn.disabled = false;
-                btn.innerHTML = "Gửi AI chấm!";
-            }, 2000);
-
-        } catch (err) {
-            alert("Lỗi gửi: " + err.message);
-            btn.disabled = false;
-            btn.innerHTML = "Gửi AI chấm!";
+        if (saveAudio && audioBlob) {
+            payload.audioData = await blobToBase64(audioBlob);
+            payload.audioName = `${studentName}_${Date.now()}.webm`;
         }
+
+        // === GỬI DƯỚI DẠNG FORM-DATA ĐỂ APPS SCRIPT NHẬN ĐƯỢC ===
+        const formData = new FormData();
+        for (const key in payload) {
+            formData.append(key, payload[key]);
+        }
+
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: formData
+        });
+
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch {
+            result = { success: false, error: "Phản hồi không hợp lệ" };
+        }
+
+        if (result.success) {
+            showResult(result);
+        } else {
+            showResult({ score: 0, feedback: result.error || "Lỗi chấm điểm!" });
+        }
+
+    } catch (err) {
+        console.error("Submit error:", err);
+        showResult({ score: 0, feedback: "Lỗi mạng!" });
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Gửi AI chấm!";
     }
+}
 
     function blobToBase64(blob) {
         return new Promise((resolve) => {
