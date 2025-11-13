@@ -518,7 +518,6 @@
     function closeLeaderboard() {
         document.getElementById("leaderboardModal").classList.add("hidden");
     }
-
 async function submitSpeech() {
     const transcript = document.getElementById("transcript").value.trim();
     
@@ -534,7 +533,9 @@ async function submitSpeech() {
     try {
         const res = await fetch(SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'text/plain'  // ← SỬA ĐÂY
+            },
             body: JSON.stringify({ 
                 action: "submit",
                 name: studentName, 
@@ -542,10 +543,6 @@ async function submitSpeech() {
             })
         });
 
-        // DEBUG: Log response
-        console.log("Response status:", res.status);
-        console.log("Response headers:", res.headers);
-        
         if (!res.ok) {
             throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         }
@@ -559,7 +556,7 @@ async function submitSpeech() {
         showResult(data);
 
     } catch (err) {
-        console.error("Submit error:", err);  // Xem lỗi chi tiết ở Console
+        console.error("Submit error:", err);
         alert("Lỗi gửi bài: " + err.message);
     } finally {
         btn.disabled = false;
