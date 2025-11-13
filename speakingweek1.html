@@ -155,7 +155,34 @@
     // === CẤU HÌNH CHUNG ===
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUjFwmd4kTEm7Ya9d74Tk7bMIMoPRbnyPYwb0lSc-bRspVFKCohKOwvcGBuUtr5ZoX/exec";
 
-    // ... IMAGE_PAIRS (giữ nguyên)
+    // 25 CẶP ẢNH
+    const IMAGE_PAIRS = [
+        { img1: "https://loremflickr.com/400/300/study,group", img2: "https://loremflickr.com/400/300/discuss,team", id: 1 },
+        { img1: "https://loremflickr.com/400/300/online,learning", img2: "https://loremflickr.com/400/300/yoga,people", id: 2 },
+        { img1: "https://loremflickr.com/400/300/kids,play", img2: "https://loremflickr.com/400/300/cooking,family", id: 3 },
+        { img1: "https://loremflickr.com/400/300/classroom,student", img2: "https://loremflickr.com/400/300/music,band", id: 4 },
+        { img1: "https://loremflickr.com/400/300/art,painting", img2: "https://loremflickr.com/400/300/soccer,team", id: 5 },
+        { img1: "https://loremflickr.com/400/300/volunteer,help", img2: "https://loremflickr.com/400/300/hiking,group", id: 6 },
+        { img1: "https://loremflickr.com/400/300/dance,people", img2: "https://loremflickr.com/400/400/garden,family", id: 7 },
+        { img1: "https://loremflickr.com/400/300/museum,visit", img2: "https://loremflickr.com/400/300/boardgame,play", id: 8 },
+        { img1: "https://loremflickr.com/400/300/gym,workout", img2: "https://loremflickr.com/400/300/dinner,family", id: 9 },
+        { img1: "https://loremflickr.com/400/300/music,lesson", img2: "https://loremflickr.com/400/300/photography,shoot", id: 10 },
+        { img1: "https://loremflickr.com/400/300/science,lab", img2: "https://loremflickr.com/400/300/chess,play", id: 11 },
+        { img1: "https://loremflickr.com/400/300/reading,book", img2: "https://loremflickr.com/400/300/cycling,ride", id: 12 },
+        { img1: "https://loremflickr.com/400/300/craft,make", img2: "https://loremflickr.com/400/300/swim,people", id: 13 },
+        { img1: "https://loremflickr.com/400/300/language,class", img2: "https://loremflickr.com/400/300/party,celebrate", id: 14 },
+        { img1: "https://loremflickr.com/400/300/run,marathon", img2: "https://loremflickr.com/400/300/math,study", id: 15 },
+        { img1: "https://loremflickr.com/400/300/paint,art", img2: "https://loremflickr.com/400/300/tennis,play", id: 16 },
+        { img1: "https://loremflickr.com/400/300/history,learn", img2: "https://loremflickr.com/400/300/climb,mountain", id: 17 },
+        { img1: "https://loremflickr.com/400/300/sing,choir", img2: "https://loremflickr.com/400/300/streetfood,eat", id: 18 },
+        { img1: "https://loremflickr.com/400/300/tech,code", img2: "https://loremflickr.com/400/300/volleyball,team", id: 19 },
+        { img1: "https://loremflickr.com/400/300/newspaper,read", img2: "https://loremflickr.com/400/300/bake,cake", id: 20 },
+        { img1: "https://loremflickr.com/400/300/student,study", img2: "https://loremflickr.com/400/300/travel,group", id: 21 },
+        { img1: "https://loremflickr.com/400/300/experiment,lab", img2: "https://loremflickr.com/400/300/guitar,play", id: 22 },
+        { img1: "https://loremflickr.com/400/300/write,essay", img2: "https://loremflickr.com/400/300/marathon,run", id: 23 },
+        { img1: "https://loremflickr.com/400/300/research,book", img2: "https://loremflickr.com/400/300/dance,street", id: 24 },
+        { img1: "https://loremflickr.com/400/300/art,create", img2: "https://loremflickr.com/400/300/basketball,team", id: 25 }
+    ];
 
     // === BIẾN TOÀN CỤC ===
     let studentName = "";
@@ -181,6 +208,7 @@
         document.getElementById("resultSection").classList.add("hidden");
     }
 
+    // === TẢI ẢNH NGẪU NHIÊN ===
     function loadRandomPair() {
         currentPair = IMAGE_PAIRS[Math.floor(Math.random() * IMAGE_PAIRS.length)];
         document.getElementById("img1").src = currentPair.img1 + `?t=${Date.now()}`;
@@ -193,13 +221,14 @@
         clearInterval(timerInterval);
         timeLeft = 60;
         document.getElementById("timer").textContent = "60";
+
         timerInterval = setInterval(() => {
             timeLeft--;
             document.getElementById("timer").textContent = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById("timer").textContent = "0";
-                alert("Hết giờ! Nhưng bạn vẫn có thể nói tiếp.");
+                alert("Hết giờ! Nhưng bạn vẫn có thể nói tiếp để hoàn thành câu.");
             }
         }, 1000);
     }
@@ -228,9 +257,9 @@
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
                 const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                document.getElementById("playback").src = URL.createObjectURL(blob);
+                document.getElementById("playback").src = URL.createObjectObject(blob);
             };
-        });
+        }).catch(err => console.error("Mic error:", err));
 
         recognition.onresult = (e) => {
             let final = "", interim = "";
@@ -245,14 +274,14 @@
 
         recognition.onerror = () => stopRecognition();
         recognition.onend = () => {
-            if (isRecognizing) recognition.start(); // TỰ KHỞI ĐỘNG LẠI
+            if (isRecognizing) recognition.start();
         };
 
         recognition.start();
         isRecognizing = true;
         document.getElementById("micBtn").textContent = "Dừng nói";
         document.getElementById("waveform").classList.remove("hidden");
-        resetTimer(); // GỌI NGAY KHI BẤM
+        resetTimer();
     }
 
     function stopRecognition() {
@@ -272,14 +301,19 @@
         }
     }
 
-    // === NÚT MIC ===
-    document.getElementById("micBtn").addEventListener("click", () => {
-        if (isRecognizing) {
-            stopRecognition();
-            stopRecordingAndShowReview();
-        } else {
-            startRecognition();
-        }
+    // === DOM LOADED – CHỜ HTML LOAD XONG ===
+    document.addEventListener("DOMContentLoaded", () => {
+        const micBtn = document.getElementById("micBtn");
+        if (!micBtn) return console.error("Không tìm thấy #micBtn!");
+
+        micBtn.addEventListener("click", () => {
+            if (isRecognizing) {
+                stopRecognition();
+                stopRecordingAndShowReview();
+            } else {
+                startRecognition();
+            }
+        });
     });
 
     // === GỬI BÀI ===
@@ -292,16 +326,13 @@
         btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
 
         try {
-            const res = await fetch(SCRIPT_URL + "?preflight=true", { method: "OPTIONS" });
-            if (!res.ok) throw new Error("CORS error");
-
-            const res2 = await fetch(SCRIPT_URL, {
+            const res = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: studentName, transcript })
             });
-            const data = await res2.json();
-            if (!data.success) throw new Error(data.error);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || "Lỗi server");
             showResult(data);
         } catch (err) {
             alert("Lỗi gửi: " + err.message);
@@ -315,7 +346,7 @@
     function showResult(data) {
         document.getElementById("resultSection").classList.remove("hidden");
         document.getElementById("scoreText").textContent = `${data.score}%`;
-        document.getElementById("feedbackText").textContent = data.feedback || "Cố lên!";
+        document.getElementById("feedbackText").textContent = data.feedback || "Cố lên em!";
         const cup = data.score >= 90 ? "Vàng" : data.score >= 75 ? "Bạc" : "Đồng";
         document.getElementById("cupDisplay").textContent = cup;
     }
@@ -329,9 +360,8 @@
     // === BẢNG XẾP HẠNG ===
     async function showLeaderboard() {
         try {
-            const res = await fetch(SCRIPT_URL + "?action=leaderboard&preflight=true", { method: "OPTIONS" });
-            const res2 = await fetch(SCRIPT_URL + "?action=leaderboard");
-            const data = await res2.json();
+            const res = await fetch(SCRIPT_URL + "?action=leaderboard");
+            const data = await res.json();
             const lb = data.leaderboard || [];
             const body = document.getElementById("leaderboardBody");
             body.innerHTML = lb.length ? lb.map((p, i) => `
@@ -356,5 +386,7 @@
         document.getElementById("playback").src = "";
         document.getElementById("reviewSection").classList.add("hidden");
     }
-</script></body>
+</script>
+
+</body>
 </html>
