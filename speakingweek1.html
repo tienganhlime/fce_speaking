@@ -71,10 +71,10 @@
                 <p id="nameError" class="text-red-600 text-sm mt-1 hidden"></p>
             </div>
 
-            <button onclick="startGame()" id="startBtn"
-                class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
-                BẮT ĐẦU CHƠI!
-            </button>
+           <button onclick="checkStudent()" id="startBtn"
+        class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition duration-300 text-lg shadow-lg">
+    BẮT ĐẦU CHƠI!
+</button>
         </div>
     </div>
 </div>
@@ -134,9 +134,10 @@
                 <button onclick="clearTranscript()" class="flex-1 bg-orange-500 text-white py-3 rounded-lg font-bold hover:bg-orange-600">
                     Nói lại
                 </button>
-                <button onclick="submitSpeech()" id="submitBtn" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
-                    Gửi AI chấm!
-                </button>
+               <button onclick="submitSpeech()" id="submitBtn"
+        class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+    Gửi AI chấm!
+</button>
             </div>
         </div>
     </div>
@@ -165,7 +166,7 @@
 
 <script>
     // === CẤU HÌNH ===
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyh16aq39CX_2XCaCRNIF8pn2W7eq3iunwdTqF9sS9qHSJcI6vEGbv6zoW8qblHjRpX/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSVVDvJzbU_CHc0hcDumxQ4buPmnn-fQyuLaoDuohcVY-p5iYasMijfxIiVjm19tOP/exec";
 
     const IMAGE_PAIRS = [
         { img1: "https://loremflickr.com/400/300/study,group", img2: "https://loremflickr.com/400/300/discuss,team", id: 1 },
@@ -510,6 +511,129 @@
     function closeLeaderboard() {
         document.getElementById("leaderboardModal").classList.add("hidden");
     }
+
+// === KIỂM TRA HỌC SINH ===
+async function checkStudent() {
+    const name = document.getElementById("studentName").value.trim();
+    if (!name) return alert("Vui lòng nhập tên!");
+
+    try {
+        const url = `${SCRIPT_URL}?action=checkStudent&name=${encodeURIComponent(name)}`;
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.src = url;
+
+        const response = await new Promise(resolve => {
+            const handler = e => {
+                if (e.data.type === 'APPS_SCRIPT_RESPONSE') {
+                    window.removeEventListener('message', handler);
+                    document.body.removeChild(iframe);
+                    resolve(e.data.data);
+                }
+            };
+            window.addEventListener('message', handler);
+        });
+
+        if (response.found) {
+            window.studentName = name;
+            window.studentID = response.id;
+            window.studentTarget = response.target;
+            document.getElementById("intro").classList.add("hidden");
+            document.getElementById("game").classList.remove("hidden");
+            startTimer();
+        } else {
+            alert("Không tìm thấy tên trong danh sách!");
+        }
+    } catch (err) {
+        alert("Lỗi kiểm tra tên!");
+        console.error(err);
+    }
+}
+
+// === GỬI BÀI NÓI ===
+async function submitSpeech() {
+    const transcript = document.getElementById("transcript").value.trim();
+    if (!transcript) return alert("Chưa có lời nói!");
+
+    const saveAudio = document.getElementById("saveAudioCheckbox")?.checked || false;
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerHTML = 'Đang gửi...';
+
+    try {
+        const payload = {
+            action: "submit",
+            name: window.studentName,
+            id: window.studentID,
+            target: window.studentTarget,
+            transcript: transcript,
+            saveAudio: saveAudio
+        };
+
+        if (saveAudio && window.audioBlob) {
+            payload.audioData = await blobToBase64(window.audioBlob);
+            payload.audioName = `${window.studentName}_${Date.now()}.webm`;
+        }
+
+        // Dùng iframe + form để bỏ qua CORS
+        const iframe = document.createElement('iframe');
+        iframe.name = 'cors-frame';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = SCRIPT_URL;
+        form.target = 'cors-frame';
+
+        for (const [key, value] of Object.entries(payload)) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = typeof value === 'object' ? JSON.stringify(value) : value;
+            form.appendChild(input);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+
+        const response = await new Promise(resolve => {
+            const handler = e => {
+                if (e.data.type === 'APPS_SCRIPT_RESPONSE') {
+                    window.removeEventListener('message', handler);
+                    document.body.removeChild(iframe);
+                    document.body.removeChild(form);
+                    resolve(e.data.data);
+                }
+            };
+            window.addEventListener('message', handler);
+        });
+
+        if (response.success) {
+            showResult(response);
+        } else {
+            showResult({ score: 0, feedback: response.error || "Lỗi chấm điểm!" });
+        }
+
+    } catch (err) {
+        console.error("Submit error:", err);
+        showResult({ score: 0, feedback: "Lỗi mạng!" });
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Gửi AI chấm!";
+    }
+}
+
+// === HỖ TRỢ: CHUYỂN BLOB SANG BASE64 ===
+function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
 </script>
 
 </body>
