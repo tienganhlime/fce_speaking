@@ -56,7 +56,7 @@
                     <div class="text-yellow-800 text-sm">
                         <p class="font-bold mb-1">Lưu ý:</p>
                         <p>• Phải nhập đúng tên trong danh sách</p>
-                        <p>• Giữ nút để nói, thả để dừng</p>
+                        <p>• Nhấn giữ nút để nói, thả để dừng</p>
                         <p>• AI chấm theo tiêu chí FCE</p>
                     </div>
                 </div>
@@ -109,10 +109,12 @@
 
         <div class="text-center mb-6">
             <div id="timer" class="text-5xl font-bold text-red-600 mb-4">60</div>
-            <button id="micBtn" class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
-                Bắt đầu nói
+            <button id="micBtn" 
+                class="bg-red-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-lg hover:bg-red-700 transition">
+                Nhấn giữ để nói
             </button>
             <div id="waveform" class="waveform mt-4 hidden"></div>
+            <p id="micStatus" class="text-sm text-gray-600 mt-2"></p>
         </div>
 
         <div id="reviewSection" class="hidden bg-gray-50 p-6 rounded-xl">
@@ -167,10 +169,14 @@
     let studentName = "";
     let studentID = "";
     let currentPair = null;
-    let recognition, mediaRecorder, audioChunks = [];
+    let recognition = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
     let finalTranscript = "";
     let isRecognizing = false;
-    let timerInterval, timeLeft = 60;
+    let timerInterval = null;
+    let timeLeft = 60;
+    let micStream = null;
 
     // === KIỂM TRA VÀ BẮT ĐẦU ===
     async function startGame() {
@@ -260,106 +266,152 @@
     function setupMicButton() {
         const micBtn = document.getElementById("micBtn");
         
-        micBtn.addEventListener("mousedown", startRecognition);
-        micBtn.addEventListener("mouseup", stopAndReview);
+        // Mouse events
+        micBtn.addEventListener("mousedown", handleMicStart);
+        micBtn.addEventListener("mouseup", handleMicStop);
+        micBtn.addEventListener("mouseleave", handleMicStop);
         
+        // Touch events
         micBtn.addEventListener("touchstart", (e) => {
             e.preventDefault();
-            startRecognition();
+            handleMicStart();
         });
         
         micBtn.addEventListener("touchend", (e) => {
             e.preventDefault();
-            stopAndReview();
+            handleMicStop();
         });
     }
 
-    // === SPEECH RECOGNITION ===
-    function startRecognition() {
+    // === BẮT ĐẦU GHI ÂM ===
+    async function handleMicStart() {
         if (isRecognizing) return;
         
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("Vui lòng dùng Chrome/Edge!");
-            return;
-        }
+        try {
+            // Kiểm tra trình duyệt
+            if (!('webkitSpeechRecognition' in window)) {
+                alert("Vui lòng dùng Chrome hoặc Edge!");
+                return;
+            }
 
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
+            document.getElementById("micStatus").textContent = "Đang xin quyền micro...";
 
-        navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
+            // Xin quyền micro
+            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            document.getElementById("micStatus").textContent = "Đang ghi âm...";
+
+            // Setup MediaRecorder
+            mediaRecorder = new MediaRecorder(micStream);
             audioChunks = [];
 
-            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.ondataavailable = e => {
+                if (e.data.size > 0) {
+                    audioChunks.push(e.data);
+                }
+            };
             
             mediaRecorder.onstop = () => {
                 const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                // FIX: createObjectURL thay vì createObjectObject
                 document.getElementById("playback").src = URL.createObjectURL(blob);
             };
-        }).catch(err => {
-            console.error("Mic error:", err);
-            alert("Không thể truy cập micro!");
-        });
 
-        recognition.onresult = (e) => {
-            let final = "";
-            for (let i = e.resultIndex; i < e.results.length; i++) {
-                const t = e.results[i][0].transcript;
-                if (e.results[i].isFinal) {
-                    final += t + " ";
+            mediaRecorder.start();
+
+            // Setup Speech Recognition
+            recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (e) => {
+                let interimTranscript = "";
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    const transcript = e.results[i][0].transcript;
+                    if (e.results[i].isFinal) {
+                        finalTranscript += transcript + " ";
+                    } else {
+                        interimTranscript += transcript;
+                    }
                 }
-            }
-            if (final) {
-                finalTranscript += final;
-                document.getElementById("transcript").value = finalTranscript;
-            }
-        };
+                document.getElementById("transcript").value = finalTranscript + interimTranscript;
+            };
 
-        recognition.onerror = (e) => {
-            console.error("Recognition error:", e);
-            stopRecognition();
-        };
+            recognition.onerror = (e) => {
+                console.error("Recognition error:", e.error);
+                document.getElementById("micStatus").textContent = "Lỗi: " + e.error;
+                handleMicStop();
+            };
 
-        recognition.onend = () => {
-            if (isRecognizing) {
-                recognition.start();
-            }
-        };
+            recognition.onend = () => {
+                if (isRecognizing) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.error("Restart error:", e);
+                    }
+                }
+            };
 
-        recognition.start();
-        isRecognizing = true;
-        
-        document.getElementById("micBtn").textContent = "Đang nói... (Thả để dừng)";
-        document.getElementById("micBtn").classList.add("bg-blue-600");
-        document.getElementById("waveform").classList.remove("hidden");
-        
-        startTimer();
-    }
+            recognition.start();
+            isRecognizing = true;
+            
+            // UI updates
+            document.getElementById("micBtn").textContent = "Đang nói... (Thả để dừng)";
+            document.getElementById("micBtn").classList.add("bg-blue-600");
+            document.getElementById("micBtn").classList.remove("bg-red-600");
+            document.getElementById("waveform").classList.remove("hidden");
+            
+            startTimer();
 
-    function stopRecognition() {
-        if (recognition) {
-            recognition.stop();
+        } catch (err) {
+            console.error("Mic start error:", err);
+            alert("Không thể truy cập micro! Vui lòng kiểm tra quyền truy cập.");
+            document.getElementById("micStatus").textContent = "Lỗi: " + err.message;
         }
-        isRecognizing = false;
     }
 
-    function stopAndReview() {
-        stopRecognition();
-        
+    // === DỪNG GHI ÂM ===
+    function handleMicStop() {
+        if (!isRecognizing) return;
+
+        isRecognizing = false;
+
+        // Stop recognition
+        if (recognition) {
+            try {
+                recognition.stop();
+            } catch (e) {
+                console.error("Stop recognition error:", e);
+            }
+            recognition = null;
+        }
+
+        // Stop recorder
         if (mediaRecorder && mediaRecorder.state !== "inactive") {
-            mediaRecorder.stop();
+            try {
+                mediaRecorder.stop();
+            } catch (e) {
+                console.error("Stop recorder error:", e);
+            }
+        }
+
+        // Stop mic stream
+        if (micStream) {
+            micStream.getTracks().forEach(track => track.stop());
+            micStream = null;
         }
         
         stopTimer();
         
-        document.getElementById("micBtn").textContent = "Bắt đầu nói";
+        // UI updates
+        document.getElementById("micBtn").textContent = "Nhấn giữ để nói";
         document.getElementById("micBtn").classList.remove("bg-blue-600");
+        document.getElementById("micBtn").classList.add("bg-red-600");
         document.getElementById("waveform").classList.add("hidden");
+        document.getElementById("micStatus").textContent = "";
 
+        // Show review if has transcript
         if (finalTranscript.trim()) {
             document.getElementById("reviewSection").classList.remove("hidden");
         }
