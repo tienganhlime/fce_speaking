@@ -518,6 +518,54 @@
     function closeLeaderboard() {
         document.getElementById("leaderboardModal").classList.add("hidden");
     }
+
+async function submitSpeech() {
+    const transcript = document.getElementById("transcript").value.trim();
+    
+    if (!transcript) {
+        alert("Chưa có lời nói!");
+        return;
+    }
+
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
+
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                action: "submit",
+                name: studentName, 
+                transcript 
+            })
+        });
+
+        // DEBUG: Log response
+        console.log("Response status:", res.status);
+        console.log("Response headers:", res.headers);
+        
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        
+        if (!data.success) {
+            throw new Error(data.error || "Lỗi server");
+        }
+
+        showResult(data);
+
+    } catch (err) {
+        console.error("Submit error:", err);  // Xem lỗi chi tiết ở Console
+        alert("Lỗi gửi bài: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Gửi AI chấm!";
+    }
+}
 </script>
 
 </body>
