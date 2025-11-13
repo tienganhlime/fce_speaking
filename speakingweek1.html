@@ -397,7 +397,7 @@
     }
 
     // === GỬI BÀI ===
-    async function submitSpeech() {
+   async function submitSpeech() {
     const transcript = document.getElementById("transcript").value.trim();
     if (!transcript) return alert("Chưa có lời nói!");
 
@@ -421,15 +421,11 @@
             payload.audioName = `${studentName}_${Date.now()}.webm`;
         }
 
-        // === GỬI DƯỚI DẠNG FORM-DATA ĐỂ APPS SCRIPT NHẬN ĐƯỢC ===
-        const formData = new FormData();
-        for (const key in payload) {
-            formData.append(key, payload[key]);
-        }
-
+        // === GỬI JSON THUẦN TỤY ===
         const response = await fetch(SCRIPT_URL, {
             method: 'POST',
-            body: formData
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
 
         const text = await response.text();
@@ -437,7 +433,7 @@
         try {
             result = JSON.parse(text);
         } catch {
-            result = { success: false, error: "Phản hồi không hợp lệ" };
+            result = { success: false, error: "Phản hồi không hợp lệ: " + text };
         }
 
         if (result.success) {
@@ -448,7 +444,7 @@
 
     } catch (err) {
         console.error("Submit error:", err);
-        showResult({ score: 0, feedback: "Lỗi mạng!" });
+        showResult({ score: 0, feedback: "Lỗi mạng: " + err.message });
     } finally {
         btn.disabled = false;
         btn.innerHTML = "Gửi AI chấm!";
