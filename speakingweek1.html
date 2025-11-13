@@ -229,66 +229,100 @@
     img2.src = currentPair.img2 + `?t=${Date.now()}`;
     
     // Reset timer SAU CÙNG
-    resetTimer();
-    finalTranscript = "";
-    document.getElementById("transcript").value = "";
+    function resetTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 60;
+    document.getElementById("timer").textContent = "60";
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            // CHỈ CẢNH BÁO – KHÔNG DỪNG GHI ÂM
+            alert("Hết giờ! Nhưng bạn vẫn có thể nói tiếp để hoàn thành câu.");
+            document.getElementById("timer").textContent = "0";
+            // recognition vẫn chạy → finalTranscript vẫn ghi
+        }
+    }, 1000);
 }
 
     // === WEB SPEECH API ===
-    function startRecognition() {
-        if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-            alert("Trình duyệt không hỗ trợ nhận diện giọng nói! Dùng Chrome/Edge.");
-            return;
+  function startRecognition() {
+    if (!('webkitSpeechRecognition' in window)) {
+        alert("Trình duyệt không hỗ trợ! Dùng Chrome/Edge.");
+        return;
+    }
+
+    recognition = new webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    // GHI ÂM
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            document.getElementById("audioPlayback").src = url;
+        };
+    });
+
+    recognition.onstart = () => {
+        isRecognizing = true;
+        document.getElementById("micBtn").textContent = "Dừng nói";
+        document.getElementById("waveform").classList.remove("hidden");
+        resetTimer();
+    };
+
+    recognition.onresult = (event) => {
+        let final = "";
+        let interim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            const result = event.results[i];
+            if (result.isFinal) {
+                final += result[0].transcript + " ";
+            } else {
+                interim += result[0].transcript;
+            }
         }
+        finalTranscript = final;
+        document.getElementById("transcript").value = final + interim;
+    };
 
-        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
+    recognition.onerror = (e) => {
+        console.error("Lỗi:", e.error);
+        alert("Lỗi mic: " + e.error);
+        stopRecognition();
+    };
 
-        recognition.onstart = () => {
-            isRecognizing = true;
-            document.getElementById("micBtn").textContent = "Dừng nói";
-            document.getElementById("waveform").classList.remove("hidden");
-            startTimer();
-        };
+    recognition.onend = () => {
+        isRecognizing = false;
+        document.getElementById("micBtn").textContent = "Bắt đầu nói";
+        document.getElementById("waveform").classList.add("hidden");
+        stopTimer();
 
-        recognition.onresult = (event) => {
-            let interim = "";
-            finalTranscript = "";
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript + " ";
-                } else {
-                    interim += event.results[i][0].transcript;
-                }
-            }
-            document.getElementById("transcript").value = finalTranscript + interim;
-        };
+        if (finalTranscript.trim()) {
+            document.getElementById("transcript").value = finalTranscript.trim();
+            document.getElementById("reviewSection").classList.remove("hidden");
+            if (mediaRecorder) mediaRecorder.stop();
+        }
+    };
 
-        recognition.onerror = (e) => {
-            console.error("Lỗi nhận diện:", e.error);
-            alert("Lỗi: " + e.error);
-            stopRecognition();
-        };
-
-        recognition.onend = () => {
-            isRecognizing = false;
-            document.getElementById("micBtn").textContent = "Bắt đầu nói";
-            document.getElementById("waveform").classList.add("hidden");
-            stopTimer();
-            if (finalTranscript.trim()) {
-                document.getElementById("reviewSection").classList.remove("hidden");
-            }
-        };
-
-        recognition.start();
+    recognition.start();
+}
+function stopRecognition() {
+    if (recognition && isRecognizing) {
+        recognition.stop();
+        isRecognizing = false;
     }
-
-    function stopRecognition() {
-        if (recognition && isRecognizing) recognition.stop();
-    }
-
+}
     // === TIMER ===
     function startTimer() {
         seconds = 60;
@@ -312,35 +346,36 @@
     }
 
     // === GỬI BÀI ===
-    async function submitSpeech() {
-        const transcript = document.getElementById("transcript").value.trim();
-        if (!transcript) return alert("Chưa nói gì! Hãy nói trước.");
+async function submitSpeech() {
+    const transcript = document.getElementById("transcript").value.trim();
+    if (!transcript) return alert("Chưa có lời nói!");
 
-        const btn = event.target;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Đang chấm...';
 
-        try {
-            const res = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({
-                    name: studentName,
-                    pairId: currentPair.id,
-                    transcript: transcript
-                })
-            });
-            const data = await res.json();
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: studentName,
+                pairId: currentPair.id,
+                transcript: transcript
+            })
+        });
 
-            if (!data.success) throw new Error(data.error);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
 
-            showResult(data);
-        } catch (err) {
-            alert("Lỗi: " + err.message);
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = "Gửi AI chấm!";
-        }
+        showResult(data);
+    } catch (err) {
+        alert("Lỗi gửi: " + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = "Gửi AI chấm!";
     }
+}
 
     // === HIỂN THỊ KẾT QUẢ ===
     function showResult(data) {
@@ -386,14 +421,24 @@
 
     // === SỰ KIỆN NÚT MIC ===
     document.addEventListener("DOMContentLoaded", () => {
-        const micBtn = document.getElementById("micBtn");
-        micBtn.addEventListener("click", () => {
-            if (isRecognizing) {
-                stopRecognition();
-            } else {
-                startRecognition();
-            }
-        });
+        const micBtn = document.getElementById("micBtn").addEventListener("click", () => {
+    if (isRecognizing) {
+        stopRecognition();
+        stopRecording(); // Dừng ghi âm
+        document.getElementById("micBtn").textContent = "Bắt đầu nói";
+        document.getElementById("waveform").classList.add("hidden");
+        stopTimer();
+
+        // TỰ ĐỘNG GỬI SAU KHI DỪNG
+        if (finalTranscript.trim()) {
+            submitSpeech();
+        }
+    } else {
+        startRecognition();
+        startRecording(); = true;
+        document.getElementById("micBtn").textContent = "Dừng nói";
+    }
+});
     });
 </script>
     
