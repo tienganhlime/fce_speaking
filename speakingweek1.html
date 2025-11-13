@@ -257,7 +257,7 @@
             mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
             mediaRecorder.onstop = () => {
                 const blob = new Blob(audioChunks, { type: 'audio/webm' });
-                document.getElementById("playback").src = URL.createObjectObject(blob);
+                document.getElementById("playback").src = URL.createObjectURL(blob);
             };
         }).catch(err => console.error("Mic error:", err));
 
