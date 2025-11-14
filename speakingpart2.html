@@ -133,8 +133,9 @@ function setupRecognition() {
     recog.interimResults = true;
     recog.lang = 'en-US';
 
+    let finalTranscript = '';
+
     recog.onresult = (event) => {
-        let finalTranscript = '';
         let interimTranscript = '';
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -146,13 +147,22 @@ function setupRecognition() {
             }
         }
 
-        if (finalTranscript) {
-            state.transcript += finalTranscript;
-        } else {
-            const base = state.transcript;
-            state.transcript = base + interimTranscript;
-        }
+        // Update state with both final and interim
+        state.transcript = finalTranscript + interimTranscript;
         render();
+    };
+
+    recog.onend = () => {
+        // When recognition ends, save final transcript
+        state.transcript = finalTranscript;
+        console.log('Recognition ended. Final transcript:', finalTranscript);
+    };
+
+    recog.onerror = (event) => {
+        console.error('Recognition error:', event.error);
+        if (event.error === 'no-speech') {
+            alert('Không nghe thấy giọng nói. Vui lòng nói to hơn!');
+        }
     };
 
     return recog;
@@ -160,34 +170,63 @@ function setupRecognition() {
 
 async function startRecording() {
     try {
+        // Reset transcript
+        state.transcript = '';
+        
         recognition = setupRecognition();
         if (!recognition) return;
         
         recognition.start();
+        console.log('Speech recognition started');
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
 
         mediaRecorder.ondataavailable = (event) => {
-            audioChunks.push(event.data);
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            console.log('Media recorder stopped. Audio chunks:', audioChunks.length);
+            // Stop all tracks
+            stream.getTracks().forEach(track => track.stop());
         };
 
         mediaRecorder.start();
         state.isRecording = true;
-        state.transcript = '';
         render();
+        
+        console.log('Recording started successfully');
     } catch (error) {
-        alert('Không thể truy cập microphone!');
+        console.error('Recording error:', error);
+        alert('Không thể truy cập microphone! Lỗi: ' + error.message);
     }
 }
 
 function stopRecording() {
-    if (recognition) recognition.stop();
+    if (recognition) {
+        recognition.stop();
+    }
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
+        
+        // Stop all audio tracks
+        if (mediaRecorder.stream) {
+            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        }
     }
+    
     state.isRecording = false;
+    
+    // Ensure transcript is displayed even if empty
+    if (!state.transcript || state.transcript.trim() === '') {
+        state.transcript = '[Không có transcript - có thể do không nghe thấy giọng nói hoặc lỗi ghi âm]';
+    }
+    
+    console.log('Recording stopped. Transcript:', state.transcript);
     render();
 }
 
@@ -522,6 +561,12 @@ function renderStudentView() {
                                 <div class="p-4 bg-gray-50 rounded-lg min-h-[100px] border">
                                     <p class="whitespace-pre-wrap">${state.transcript}</p>
                                 </div>
+                                
+                                <div class="mt-2 text-sm text-gray-600">
+                                    Số ký tự: ${state.transcript.length} | 
+                                    Số từ: ${state.transcript.split(/\s+/).filter(w => w).length}
+                                </div>
+                                
                                 <div class="mt-4 flex items-center gap-4">
                                     <label class="flex items-center gap-2">
                                         <input type="checkbox" ${state.saveAudio ? 'checked' : ''} 
@@ -534,7 +579,11 @@ function renderStudentView() {
                                     </button>
                                 </div>
                             </div>
-                        ` : ''}
+                        ` : (!state.isRecording ? `
+                            <div class="mb-6 p-4 bg-blue-50 rounded-lg text-center text-gray-600">
+                                💡 Bấm "Bắt Đầu Ghi Âm" và nói tiếng Anh. Transcript sẽ hiện ở đây.
+                            </div>
+                        ` : '')}
 
                         ${state.result ? `
                             <div class="mb-6 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-300">
